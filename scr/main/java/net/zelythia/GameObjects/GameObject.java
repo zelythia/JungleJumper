@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
 
+
+//Model
 public class GameObject implements Tickable {
 
     public Shape shape;
@@ -16,11 +18,15 @@ public class GameObject implements Tickable {
     public int y;
 
 
-    public GameObject(Shape shape, String sprite, int x, int y) throws IOException {
+    public GameObject(Shape shape, String sprite, int x, int y){
         this.shape = shape;
-        this.sprite = ImageIO.read(new File(sprite));
         this.x = x;
         this.y = y;
+        try {
+            this.sprite = ImageIO.read(new File(sprite));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
