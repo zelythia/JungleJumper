@@ -16,7 +16,6 @@ public class JumpKing {
         frame = new JFrame("Jump King'ish");
         engine = new GameEngine();
 
-
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.setSize(480, 800);

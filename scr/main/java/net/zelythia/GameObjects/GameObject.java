@@ -10,15 +10,15 @@ import java.util.Vector;
 
 
 //Model
-public class GameObject implements Tickable {
+public class GameObject{
 
     public Shape shape;
     public Image sprite;
-    public int x;
-    public int y;
+    public float x;
+    public float y;
 
 
-    public GameObject(Shape shape, String sprite, int x, int y){
+    public GameObject(Shape shape, String sprite, float x, float y){
         this.shape = shape;
         this.x = x;
         this.y = y;
@@ -29,13 +29,26 @@ public class GameObject implements Tickable {
         }
     }
 
-
     public void draw(Graphics graphics, Component component){
         graphics.drawImage(sprite, x, y, shape.getBounds().width, shape.getBounds().height, component);
     }
 
-    @Override
-    public void process() {
+    public void setShape(Shape shape)
+    {
+        this.shape = shape;
+    }
 
+    public void setSprite(String sprite){
+        try {
+            this.sprite = ImageIO.read(new File(sprite));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setPos(float x, float y)
+    {
+        this.x = x;
+        this.y = y;
     }
 }
