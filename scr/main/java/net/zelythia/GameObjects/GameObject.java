@@ -1,6 +1,5 @@
 package net.zelythia.GameObjects;
 
-import net.zelythia.Tickable;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -12,13 +11,13 @@ import java.util.Vector;
 //Model
 public class GameObject{
 
-    public Shape shape;
-    public Image sprite;
-    public float x;
-    public float y;
+    private Shape shape;
+    private Image sprite;
+    private int x;
+    private int y;
 
 
-    public GameObject(Shape shape, String sprite, float x, float y){
+    public GameObject(Shape shape, String sprite, int x, int y){
         this.shape = shape;
         this.x = x;
         this.y = y;
@@ -46,7 +45,7 @@ public class GameObject{
         }
     }
 
-    public void setPos(float x, float y)
+    public void setPos(int x, int y)
     {
         this.x = x;
         this.y = y;

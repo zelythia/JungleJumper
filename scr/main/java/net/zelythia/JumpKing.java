@@ -1,7 +1,11 @@
 package net.zelythia;
 
 
+import net.zelythia.List.List;
+
 import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
 
 public class JumpKing {
 
@@ -13,8 +17,9 @@ public class JumpKing {
     private GameEngine engine;
 
     public JumpKing(){
+        test();
+
         frame = new JFrame("Jump King'ish");
-        engine = new GameEngine();
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
@@ -24,13 +29,21 @@ public class JumpKing {
         initializeGameScene();
     }
 
+    public void test(){
+
+    }
 
 
     public void initializeGameScene(){
         GameScreen panel = new GameScreen();
-
         frame.getContentPane().add(panel);
         panel.addKeyListener(engine);
+
+
+        engine = new GameEngine(panel);
+
+
+
 
         //Creating the game loop
         new Thread( () -> {
@@ -40,6 +53,7 @@ public class JumpKing {
                 long lastTime = System.nanoTime();
 
                 engine.update((float)(delta / 1000000000.0));
+                engine.render(frame.getGraphics());
 
                 delta = System.nanoTime() - lastTime;
                 if (delta < 20000000L) {

@@ -1,6 +1,9 @@
 package net.zelythia;
 
+import net.zelythia.GameObjects.Player;
+
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -8,26 +11,32 @@ import java.awt.event.KeyListener;
 //Game controller = Game engine = Control
 public class GameEngine implements KeyListener {
 
-    private JPanel panel;
+    private Renderer renderer;
 
-    Player player;
+    public Player player;
 
-    public GameEngine(){
+    public GameEngine(Renderer renderer){
+        this.renderer = renderer;
 
+        initializeGameObjects();
     }
 
     public void initializeGameObjects()
     {
         player = new Player(new Rectangle(50, 50), "scr/main/resources/player.png", 400, 400);
+
+        renderer.addGameObject(player);
     }
 
 
     public void update(float deltaTime){
         calculateColissions();
-        
-        
-        //Do all game logic here
-        player.draw(null, panel);
+
+
+    }
+
+    public void render(Graphics graphics){
+        renderer.render(graphics);
     }
 
     public void calculateColissions(){

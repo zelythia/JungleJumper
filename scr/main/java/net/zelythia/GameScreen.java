@@ -1,27 +1,44 @@
 package net.zelythia;
 
-import net.zelythia.GameObjects.Player;
+import net.zelythia.GameObjects.GameObject;
+import net.zelythia.List.List;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.File;
 
 //Panel = Screen = View
-public class GameScreen extends JPanel {
+public class GameScreen extends JPanel implements Renderer {
+
+    public List<GameObject> gameObjects;
 
     public GameScreen(){
         this.setFocusable(true);
         this.setBackground(Color.ORANGE);
+
+        gameObjects = new List<GameObject>();
     }
 
+
+    public void addGameObject(GameObject gameObject){
+        gameObjects.add(gameObject);
+    }
+
+    @Override
+    public JPanel getPanel() {
+        return this;
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
-        //gameObject.draw(g, this);
+        super.paintComponent(g);
 
-        //player.draw(g, this);
+        for(int i = 0; i < gameObjects.size; i++){
+            gameObjects.get(i).draw(g, this);
+        }
     }
 
+    @Override
+    public void render(Graphics graphics) {
+        super.repaint();
+    }
 }
