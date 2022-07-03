@@ -1,40 +1,40 @@
 package net.zelythia.GameObjects;
 
 
+import net.zelythia.CollisionType;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.geom.RectangularShape;
 import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
 
 
 //Model
-public class GameObject{
+public abstract class GameObject{
 
-    private Shape shape;
+    private RectangularShape shape;
     private Image sprite;
-    private int x;
-    private int y;
+    private CollisionType collisionType;
 
-
-    public GameObject(Shape shape, String sprite, int x, int y){
+    public GameObject(RectangularShape shape, String sprite){
         this.shape = shape;
-        this.x = x;
-        this.y = y;
         try {
             this.sprite = ImageIO.read(new File(sprite));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        collisionType = CollisionType.NONE;
     }
+    
 
-    public void draw(Graphics graphics, Component component){
-        graphics.drawImage(sprite, x, y, shape.getBounds().width, shape.getBounds().height, component);
-    }
-
-    public void setShape(Shape shape)
+    public void setShape(RectangularShape shape)
     {
         this.shape = shape;
+    }
+    public RectangularShape getShape() {
+        return shape;
     }
 
     public void setSprite(String sprite){
@@ -45,9 +45,27 @@ public class GameObject{
         }
     }
 
-    public void setPos(int x, int y)
-    {
-        this.x = x;
-        this.y = y;
+    public Image getSprite(){
+        return sprite;
+    }
+
+    public void setPos(double x, double y){
+        this.shape.setFrame(x, y, this.shape.getWidth(), this.shape.getHeight());
+    }
+
+    public double getX(){
+        return shape.getX();
+    }
+
+    public double getY(){
+        return shape.getY();
+    }
+
+    public void setCollisionType(CollisionType type){
+        collisionType = type;
+    }
+
+    public CollisionType getCollisionType(){
+        return collisionType;
     }
 }
