@@ -1,10 +1,12 @@
 package net.zelythia;
 
 import net.zelythia.GameObjects.GameObject;
-import net.zelythia.List.List;
+import net.zelythia.Utils.List.List;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.RectangularShape;
 
 //Panel = Screen = View
 public class GameRenderer extends JPanel implements Renderer {
@@ -29,10 +31,6 @@ public class GameRenderer extends JPanel implements Renderer {
         gameObjects.add(gameObject);
     }
 
-    @Override
-    public JPanel getPanel() {
-        return this;
-    }
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -42,8 +40,11 @@ public class GameRenderer extends JPanel implements Renderer {
         g.setColor(new Color(51, 102, 0));
         g.fillRect(camX,camY,camWidth,camHeight);
 
+        //Camera debugging
+        //g.setColor(new Color(0,0,0,40));
+        //g.fillRect(camX+20,camY+20,camWidth-40,camHeight-40);
 
-        Rectangle camera = new Rectangle(camX,camY,camWidth,camHeight);
+        RectangularShape camera = new Rectangle2D.Double(camX, camY, camWidth, camHeight);
 
         for(int i = 0; i < gameObjects.size; i++){
 
@@ -51,13 +52,13 @@ public class GameRenderer extends JPanel implements Renderer {
 
             //If the gameObjects is inside the camera i.e. visible -> Draw the gameObject
             if(camera.intersects(gameObject.getShape().getBounds2D())){
-                g.drawImage(gameObject.getSprite(),
+                g.drawImage(
+                        gameObject.getSprite(),
                         (int) (gameObject.getX() - camX), (int) (gameObject.getY() - camY),
                         (int) gameObject.getShape().getWidth(), (int) gameObject.getShape().getHeight(),
                         this
-                    );
+                );
             }
-
         }
     }
 
@@ -66,6 +67,11 @@ public class GameRenderer extends JPanel implements Renderer {
         this.camY = y;
         this.camWidth = width;
         this.camHeight = height;
+    }
+
+    public void setCameraPosition(int x, int y){
+        this.camX = x;
+        this.camY = y;
     }
 
     @Override

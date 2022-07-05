@@ -1,9 +1,16 @@
 package net.zelythia;
 
+import net.zelythia.Collision.CollisionData;
+import net.zelythia.Collision.CollisionType;
+import net.zelythia.Collision.Side;
+import net.zelythia.Events.CollisionListener;
+import net.zelythia.Events.UpdateListener;
 import net.zelythia.GameObjects.GameObject;
 import net.zelythia.GameObjects.Player;
 import net.zelythia.GameObjects.Solid;
-import net.zelythia.List.List;
+import net.zelythia.Utils.List.List;
+import net.zelythia.Utils.Utils;
+import net.zelythia.Utils.Vector2D;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -15,7 +22,7 @@ import java.awt.geom.RectangularShape;
 //Game controller = Game engine = Control
 public class GameEngine implements KeyListener {
 
-    private Renderer renderer;
+    private final Renderer renderer;
 
     public Player player;
     public List<Solid> solids;
@@ -40,15 +47,15 @@ public class GameEngine implements KeyListener {
 
     public void initializeGameObjects()
     {
-        player = new Player(new Rectangle(200, 400, 50, 50), "scr/main/resources/player.png", 1, 5);
+        player = new Player(new Rectangle2D.Double(200, 600, 50, 50), "scr/main/resources/player.png", 1, 10);
         collisionListeners.add(player);
 
         solids.add(new Solid(0, 700,480, 20, "scr/main/resources/wall.png"));
 
-
         //Rendering the gameObjects
-        renderer.addGameObject(player);
         renderer.addGameObject(solids.get(0));
+        renderer.addGameObject(player);
+
     }
 
 
@@ -62,15 +69,21 @@ public class GameEngine implements KeyListener {
             updateListeners.get(i).update(deltaTime);
         }
 
-        player.vel.y += 1;
+
+//=====Player movement======================================
+
+        //Gravity
+        if(player.vel.y < 10){
+            player.vel.y += 1;
+        }
+        //Limiting the players speed
         player.vel.clamp(-player.maxSpeed, player.maxSpeed);
+
         movePlayer();
+        //renderer.setCameraPosition(0, (int) player.getY() - 650);
 
-        //System.out.println(player.vel);
-    }
 
-    public float lerp(float a, float b, float f){
-        return a + f * (b - a);
+        System.out.println(player.getY());
     }
 
     public void movePlayer(){
@@ -85,34 +98,35 @@ public class GameEngine implements KeyListener {
                 RectangularShape gameObjectShape = player.getShape();
 
                 //Extending the bounds of the Rectangle on the side to calculate collision when gamObjects are touching and not when overlapping
-                if(new Rectangle2D.Double(gameObjectShape.getX(), gameObjectShape.getY(), gameObjectShape.getWidth(), gameObjectShape.getHeight()+1).intersects(bounds)){
+                if(new Rectangle2D.Double(gameObjectShape.getX(), gameObjectShape.getY(), gameObjectShape.getWidth(), gameObjectShape.getHeight()+player.vel.y).intersects(bounds)){
                     //Side = BOTTOM
                     if(player.vel.y > 0){
-                        //player.setPos(player.getX() + player.vel.x, player.getY());
+                        player.setPos(player.getX() + player.vel.x, bounds.getY()-player.getShape().getHeight());
                         player.vel.y = 0;
                         collides = true;
                     }
                 }
-                if(new Rectangle2D.Double(gameObjectShape.getX(), gameObjectShape.getY(), gameObjectShape.getWidth()+1, gameObjectShape.getHeight()).intersects(bounds)){
+                if(new Rectangle2D.Double(gameObjectShape.getX(), gameObjectShape.getY()+player.vel.y, gameObjectShape.getWidth(), gameObjectShape.getHeight()).intersects(bounds)){
+                    //Side = TOP
+                    if(player.vel.y < 0){
+                        player.setPos(player.getX() + player.vel.x, bounds.getY()+bounds.getHeight());
+                        player.vel.y = 0;
+                        collides = true;
+                    }
+                }
+
+                if(new Rectangle2D.Double(gameObjectShape.getX(), gameObjectShape.getY(), gameObjectShape.getWidth()+player.vel.x, gameObjectShape.getHeight()).intersects(bounds)){
                     //Side = RIGHT
                     if(player.vel.x > 0) {
-                        //player.setPos(player.getX(), player.getY() + player.vel.y);
+                        player.setPos(player.getX(), bounds.getX()-player.getShape().getWidth());
                         player.vel.x = 0;
                         collides = true;
                     }
                 }
-                if(new Rectangle2D.Double(gameObjectShape.getX(), gameObjectShape.getY()-1, gameObjectShape.getWidth(), gameObjectShape.getHeight()+1).intersects(bounds)){
-                    //Side = TOP
-                    if(player.vel.y < 0){
-                        //player.setPos(player.getX() + player.vel.x, player.getY());
-                        player.vel.y = 0;
-                        collides = true;
-                    }
-                }
-                if(new Rectangle2D.Double(gameObjectShape.getX()-1, gameObjectShape.getY(), gameObjectShape.getWidth()+1, gameObjectShape.getHeight()).intersects(bounds)){
+                if(new Rectangle2D.Double(gameObjectShape.getX()+player.vel.x, gameObjectShape.getY(), gameObjectShape.getWidth(), gameObjectShape.getHeight()).intersects(bounds)){
                     //SIDE = LEFT
                     if(player.vel.x < 0) {
-                        //player.setPos(player.getX(), player.getY() + player.vel.y);
+                        player.setPos(player.getX(), bounds.getX()+bounds.getWidth());
                         player.vel.x = 0;
                         collides = true;
                     }
@@ -120,14 +134,13 @@ public class GameEngine implements KeyListener {
             }
         }
 
-        player.setPos(player.getX() + player.vel.x, player.getY() + player.vel.y);
-
-        if(!collides){
-            //player.setPos(player.getX() + player.vel.x, player.getY() + player.vel.y);
+        if(collides){
+            //Simulating friction:
+            player.vel.x = Utils.lerp(player.vel.x, 0, .1f);
+            player.vel.y = Utils.lerp(player.vel.y, 0, .1f);
         }
         else{
-            player.vel.x = lerp((float) player.vel.x, 0, 1f);
-            player.vel.y = lerp((float) player.vel.y, 0, 1f);
+            player.setPos(player.getX() + player.vel.x, player.getY() + player.vel.y);
         }
 
     }
@@ -177,7 +190,7 @@ public class GameEngine implements KeyListener {
         System.out.println("key");
 
         if(e.getKeyCode() == KeyEvent.VK_W){
-            storedVel.y -= 50;
+            storedVel.y -= 5;
         }
 
         if(e.getKeyCode() == KeyEvent.VK_A){

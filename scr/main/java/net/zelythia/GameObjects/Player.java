@@ -1,10 +1,13 @@
 package net.zelythia.GameObjects;
 
 import net.zelythia.*;
+import net.zelythia.Collision.CollisionData;
+import net.zelythia.Collision.CollisionType;
+import net.zelythia.Events.CollisionListener;
+import net.zelythia.Events.UpdateListener;
+import net.zelythia.Utils.Vector2D;
 
-import java.awt.*;
 import java.awt.geom.RectangularShape;
-import java.io.IOException;
 
 public class Player extends GameObject implements CollisionListener, UpdateListener {
 

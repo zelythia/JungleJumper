@@ -1,4 +1,4 @@
-package net.zelythia;
+package net.zelythia.Collision;
 
 public enum CollisionType {
     NONE, INTERACTION, COLLIDE;

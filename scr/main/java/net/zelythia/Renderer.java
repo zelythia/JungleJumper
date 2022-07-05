@@ -8,5 +8,5 @@ import java.awt.*;
 public interface Renderer {
     void render(Graphics graphics);
     void addGameObject(GameObject gameObject);
-    JPanel getPanel();
+    void setCameraPosition(int x, int y);
 }

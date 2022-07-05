@@ -1,6 +1,6 @@
-package net.zelythia;
+package net.zelythia.Events;
 
-import net.zelythia.GameObjects.GameObject;
+import net.zelythia.Collision.CollisionData;
 
 public interface CollisionListener {
     void onCollision(CollisionData collisionData);

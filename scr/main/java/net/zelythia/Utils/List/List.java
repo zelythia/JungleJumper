@@ -1,7 +1,4 @@
-package net.zelythia.List;
-
-import java.util.Iterator;
-import java.util.LinkedList;
+package net.zelythia.Utils.List;
 
 public class List<T> {
 
@@ -18,14 +15,18 @@ public class List<T> {
         size++;
     }
 
+    public void remove(T d){
+        node.remove(d);
+    }
+
     /**
      *
-     * @param i Index of the desired object
+     * @param index Index of the desired object
      */
-    public T get(int i){
-        if (i < size) {
+    public T get(int index){
+        if (index < size) {
             ListElement<T> x = node;
-            for (int j = 0; j < i; j++)
+            for (int i = 0; i < index; i++)
                 x = x.getNext();
             return x.getData();
         }

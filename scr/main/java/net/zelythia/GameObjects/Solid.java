@@ -1,8 +1,8 @@
 package net.zelythia.GameObjects;
 
-import net.zelythia.CollisionType;
+import net.zelythia.Collision.CollisionType;
 
-import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 
 public class Solid extends GameObject{
@@ -12,8 +12,8 @@ public class Solid extends GameObject{
         super.setCollisionType(CollisionType.COLLIDE);
     }
 
-    public Solid(int x, int y, int width, int height, String sprite){
-        super(new Rectangle(x, y, width, height), sprite);
+    public Solid(double x, double y, double width, double height, String sprite){
+        super(new Rectangle2D.Double(x, y, width, height), sprite);
         super.setCollisionType(CollisionType.COLLIDE);
     }
 

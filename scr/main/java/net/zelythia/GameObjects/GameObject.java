@@ -1,14 +1,13 @@
 package net.zelythia.GameObjects;
 
 
-import net.zelythia.CollisionType;
+import net.zelythia.Collision.CollisionType;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.RectangularShape;
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
 
 
 //Model

@@ -1,4 +1,4 @@
-package net.zelythia.List;
+package net.zelythia.Utils.List;
 
 public class End<T> extends ListElement<T>{
     @Override
@@ -14,5 +14,10 @@ public class End<T> extends ListElement<T>{
     @Override
     public ListElement<T> add(T d) {
         return new Node<T>(this, d);
+    }
+
+    @Override
+    public ListElement<T> remove(T d) {
+        return this;
     }
 }

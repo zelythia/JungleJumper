@@ -1,4 +1,4 @@
-package net.zelythia;
+package net.zelythia.Collision;
 
 import net.zelythia.GameObjects.GameObject;
 

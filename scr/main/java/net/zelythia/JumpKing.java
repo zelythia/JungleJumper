@@ -9,19 +9,13 @@ public class JumpKing {
         new JumpKing();
     }
 
-    private JFrame frame;
-    private GameEngine engine;
+    private final WindowManager windowManager;
 
     public JumpKing(){
+
+        windowManager = new WindowManager();
+
         test();
-
-        frame = new JFrame("Jump King'ish");
-
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-        frame.setSize(480, 800);
-        frame.setResizable(false);
-        frame.setFocusable(true);
 
         initializeGameScene();
     }
@@ -30,15 +24,19 @@ public class JumpKing {
 
     }
 
+    long WAIT_TIME = 16666666L;
 
     public void initializeGameScene(){
         GameRenderer panel = new GameRenderer();
-        frame.getContentPane().add(panel);
+        windowManager.setPanel(panel);
 
 
-        engine = new GameEngine(panel);
+        GameEngine engine = new GameEngine(panel);
 
-        frame.addKeyListener(engine);
+        windowManager.addKeyListener(engine);
+
+        //For debugging only
+        //WAIT_TIME = 150000000L;
 
         //Creating the game loop
         new Thread( () -> {
@@ -48,14 +46,14 @@ public class JumpKing {
                 long lastTime = System.nanoTime();
 
                 engine.update((float)(delta / 1000000000.0));
-                engine.render(frame.getGraphics());
+                engine.render(windowManager.getGraphics());
 
                 delta = System.nanoTime() - lastTime;
-                if (delta < 16666666L) {
+                if (delta < WAIT_TIME) {
                     try {
                         // 16666666 is roughly 60 calls per second
                         // Dividing to convert to milliseconds
-                        Thread.sleep((16666666L - delta) / 1000000L);
+                        Thread.sleep((WAIT_TIME - delta) / 1000000L);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }

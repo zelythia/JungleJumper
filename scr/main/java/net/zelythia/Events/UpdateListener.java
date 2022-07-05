@@ -1,4 +1,4 @@
-package net.zelythia;
+package net.zelythia.Events;
 
 public interface UpdateListener {
     void update(float deltaTime);
