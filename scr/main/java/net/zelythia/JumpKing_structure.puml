@@ -1,0 +1,369 @@
+@startuml
+
+/' diagram meta data start
+config=StructureConfiguration;
+{
+  "projectClassification": {
+    "searchMode": "OpenProject", // OpenProject, AllProjects
+    "includedProjects": "",
+    "pathEndKeywords": "*.impl",
+    "isClientPath": "",
+    "isClientName": "",
+    "isTestPath": "",
+    "isTestName": "",
+    "isMappingPath": "",
+    "isMappingName": "",
+    "isDataAccessPath": "",
+    "isDataAccessName": "",
+    "isDataStructurePath": "",
+    "isDataStructureName": "",
+    "isInterfaceStructuresPath": "",
+    "isInterfaceStructuresName": "",
+    "isEntryPointPath": "",
+    "isEntryPointName": "",
+    "treatFinalFieldsAsMandatory": false
+  },
+  "graphRestriction": {
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "removeByInheritance": "", // inheritance/annotation based filtering is done in a second step
+    "removeByAnnotation": "",
+    "removeByClassPackage": "", // cleanup the graph after inheritance/annotation based filtering is done
+    "removeByClassName": "",
+    "cutMappings": false,
+    "cutEnum": true,
+    "cutTests": true,
+    "cutClient": true,
+    "cutDataAccess": false,
+    "cutInterfaceStructures": false,
+    "cutDataStructures": false,
+    "cutGetterAndSetter": true,
+    "cutConstructors": true
+  },
+  "graphTraversal": {
+    "forwardDepth": 6,
+    "backwardDepth": 6,
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "hideMappings": false,
+    "hideDataStructures": false,
+    "hidePrivateMethods": true,
+    "hideInterfaceCalls": true, // indirection: implementation -> interface (is hidden) -> implementation
+    "onlyShowApplicationEntryPoints": false, // root node is included
+    "useMethodCallsForStructureDiagram": "ForwardOnly" // ForwardOnly, BothDirections, No
+  },
+  "details": {
+    "aggregation": "GroupByClass", // ByClass, GroupByClass, None
+    "showClassGenericTypes": true,
+    "showMethods": true,
+    "showMethodParameterNames": true,
+    "showMethodParameterTypes": true,
+    "showMethodReturnType": true,
+    "showPackageLevels": 2,
+    "showDetailedClassStructure": true
+  },
+  "rootClass": "net.zelythia.JumpKing",
+  "extensionCallbackMethod": "" // qualified.class.name#methodName - signature: public static String method(String)
+}
+diagram meta data end '/
+
+
+
+digraph g {
+    rankdir="TB"
+    splines=polyline
+    
+
+'nodes 
+subgraph cluster_525308036 { 
+   	label=zelythia
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   
+   GameEngine2123212363[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)GameEngine</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+   player: Player [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   renderer: Renderer [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >+   solids: List&lt;Solid&gt; [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   storedVel: Vector2D [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ initializeGameObjects()</TD></TR>
+<TR><TD ALIGN="LEFT" >+ keyPressed(e: KeyEvent)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ keyReleased(e: KeyEvent)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ keyTyped(e: KeyEvent)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ movePlayer()</TD></TR>
+<TR><TD ALIGN="LEFT" >+ render(graphics: Graphics)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ update(deltaTime: float)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ updateCollisionListeners(listener: CollisionListener)</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+GameRenderer2123212363[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)GameRenderer</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   camHeight: int [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   camWidth: int [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   camX: int [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   camY: int [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >+   gameObjects: List&lt;GameObject&gt; [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ addGameObject(gameObject: GameObject)</TD></TR>
+<TR><TD ALIGN="LEFT" ># paintComponent(g: Graphics)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ render(graphics: Graphics)</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+JumpKing2123212363[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)JumpKing</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   WAIT_TIME: long [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   windowManager: WindowManager [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ initializeGameScene()</TD></TR>
+<TR><TD ALIGN="LEFT" >+ main(args: String[])</TD></TR>
+<TR><TD ALIGN="LEFT" >+ test()</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+WindowManager2123212363[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)WindowManager</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+subgraph cluster_1070631384 { 
+   	label=Collision
+	labeljust=l
+	fillcolor="#d8d8d8"
+	style=filled
+   
+   CollisionData1878079001[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)CollisionData</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   collider: GameObject [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   side: Side [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ collider(): GameObject</TD></TR>
+<TR><TD ALIGN="LEFT" >+ side(): Side</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+
+subgraph cluster_1132276391 { 
+   	label=Utils
+	labeljust=l
+	fillcolor="#d8d8d8"
+	style=filled
+   
+   End1984496084[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)End&lt;T&gt;</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ add(d: T): ListElement&lt;T&gt;</TD></TR>
+<TR><TD ALIGN="LEFT" >+ remove(d: T): ListElement&lt;T&gt;</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+List1984496084[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)List&lt;T&gt;</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   node: ListElement&lt;T&gt; [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >+   size: int [1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ add(d: T)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ get(index: int): T</TD></TR>
+<TR><TD ALIGN="LEFT" >+ remove(d: T)</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+ListElement1984496084[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)ListElement&lt;T&gt;</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ add(d: T): ListElement&lt;T&gt;</TD></TR>
+<TR><TD ALIGN="LEFT" >+ remove(d: T): ListElement&lt;T&gt;</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Node1984496084[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Node&lt;T&gt;</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   data: T [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   next: ListElement&lt;T&gt; [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ add(d: T): ListElement&lt;T&gt;</TD></TR>
+<TR><TD ALIGN="LEFT" >+ remove(d: T): ListElement&lt;T&gt;</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Utils390690024[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Utils</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ lerp(a: int, b: int, f: int): int</TD></TR>
+<TR><TD ALIGN="LEFT" >+ lerp(a: float, b: float, f: float): float</TD></TR>
+<TR><TD ALIGN="LEFT" >+ lerp(a: double, b: double, f: double): double</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Vector2D390690024[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Vector2D</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+   x: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >+   y: double [1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ add(v: Vector2D)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ add(vx: double, vy: double)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ add(v1: Vector2D, v2: Vector2D): Vector2D</TD></TR>
+<TR><TD ALIGN="LEFT" >+ clamp(min: double, max: double)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ divide(scalar: double)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ multiply(scalar: double)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ normalize()</TD></TR>
+<TR><TD ALIGN="LEFT" >+ subtract(v: Vector2D)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ subtract(vx: double, vy: double)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ subtract(v1: Vector2D, v2: Vector2D): Vector2D</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+
+subgraph cluster_1434819016 { 
+   	label=GameObjects
+	labeljust=l
+	fillcolor="#d8d8d8"
+	style=filled
+   
+   GameObject1892412905[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)GameObject</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   collisionType: CollisionType [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   shape: RectangularShape [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   sprite: Image [0..1]</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Player1892412905[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Player</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+   maxSpeed: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   speed: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >+   vel: Vector2D [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ onCollision(collisionData: CollisionData)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ update(deltaTime: float)</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Solid1892412905[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Solid</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+} 
+
+'edges    
+CollisionData1878079001 -> GameObject1892412905[label="collider
+[0..1]"];
+GameEngine2123212363 -> GameRenderer2123212363[arrowhead=none];
+GameEngine2123212363 -> List1984496084[label="solids
+[0..1]"];
+GameEngine2123212363 -> Player1892412905[arrowhead=none];
+GameEngine2123212363 -> Solid1892412905[label="solids
+[0..1]"];
+GameEngine2123212363 -> Vector2D390690024[label="storedVel
+[0..1]"];
+GameObject1892412905 -> Player1892412905[arrowhead=none, arrowtail=empty, dir=both];
+GameObject1892412905 -> Solid1892412905[arrowhead=none, arrowtail=empty, dir=both];
+GameRenderer2123212363 -> GameObject1892412905[label="gameObjects
+[0..1]"];
+GameRenderer2123212363 -> List1984496084[label="gameObjects
+[0..1]"];
+JumpKing2123212363 -> WindowManager2123212363[label="windowManager
+[0..1]"];
+List1984496084 -> ListElement1984496084[label="node
+[0..1]"];
+ListElement1984496084 -> End1984496084[arrowhead=none, arrowtail=empty, dir=both];
+ListElement1984496084 -> Node1984496084[arrowhead=none, arrowtail=empty, dir=both];
+Node1984496084 -> ListElement1984496084[label="next
+[0..1]"];
+Player1892412905 -> CollisionData1878079001[label="onCollision() -> collider()"];
+Player1892412905 -> Vector2D390690024[label="vel
+[0..1]"];
+    
+}
+@enduml

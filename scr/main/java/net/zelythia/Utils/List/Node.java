@@ -1,4 +1,4 @@
-package net.zelythia.List;
+package net.zelythia.Utils.List;
 
 public class Node<T> extends ListElement<T> {
 
@@ -23,6 +23,15 @@ public class Node<T> extends ListElement<T> {
     @Override
     public ListElement<T> add(T d) {
         next = next.add(d);
+        return this;
+    }
+
+    @Override
+    public ListElement<T> remove(T d) {
+        if(this.data.equals(d)){
+            return next;
+        }
+        next = next.remove(d);
         return this;
     }
 }
