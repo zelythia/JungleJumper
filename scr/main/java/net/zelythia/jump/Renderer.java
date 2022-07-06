@@ -1,8 +1,7 @@
-package net.zelythia;
+package net.zelythia.jump;
 
-import net.zelythia.GameObjects.GameObject;
+import net.zelythia.jump.GameObjects.GameObject;
 
-import javax.swing.*;
 import java.awt.*;
 
 public interface Renderer {

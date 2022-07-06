@@ -1,4 +1,4 @@
-package net.zelythia.Utils;
+package net.zelythia.jump.Utils;
 
 public class Vector2D {
 

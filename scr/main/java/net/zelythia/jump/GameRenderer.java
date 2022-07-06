@@ -1,7 +1,7 @@
-package net.zelythia;
+package net.zelythia.jump;
 
-import net.zelythia.GameObjects.GameObject;
-import net.zelythia.Utils.List.List;
+import net.zelythia.jump.GameObjects.GameObject;
+import net.zelythia.jump.Utils.List.List;
 
 import javax.swing.*;
 import java.awt.*;

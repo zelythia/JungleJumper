@@ -1,6 +1,6 @@
-package net.zelythia.GameObjects;
+package net.zelythia.jump.GameObjects;
 
-import net.zelythia.Collision.CollisionType;
+import net.zelythia.jump.Collision.CollisionType;
 
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;

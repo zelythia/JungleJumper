@@ -1,4 +1,4 @@
-package net.zelythia.Utils.List;
+package net.zelythia.jump.Utils.List;
 
 public class List<T> {
 

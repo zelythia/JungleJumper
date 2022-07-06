@@ -1,16 +1,18 @@
-package net.zelythia;
+package net.zelythia.jump;
 
-import net.zelythia.Collision.CollisionData;
-import net.zelythia.Collision.CollisionType;
-import net.zelythia.Collision.Side;
-import net.zelythia.Events.CollisionListener;
-import net.zelythia.Events.UpdateListener;
-import net.zelythia.GameObjects.GameObject;
-import net.zelythia.GameObjects.Player;
-import net.zelythia.GameObjects.Solid;
-import net.zelythia.Utils.List.List;
-import net.zelythia.Utils.Utils;
-import net.zelythia.Utils.Vector2D;
+
+
+import net.zelythia.jump.Collision.CollisionData;
+import net.zelythia.jump.Collision.CollisionType;
+import net.zelythia.jump.Collision.Side;
+import net.zelythia.jump.Events.CollisionListener;
+import net.zelythia.jump.Events.UpdateListener;
+import net.zelythia.jump.GameObjects.GameObject;
+import net.zelythia.jump.GameObjects.Player;
+import net.zelythia.jump.GameObjects.Solid;
+import net.zelythia.jump.Utils.List.List;
+import net.zelythia.jump.Utils.Utils;
+import net.zelythia.jump.Utils.Vector2D;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -28,32 +30,37 @@ public class GameEngine implements KeyListener {
     public List<Solid> solids;
 
 
+    private boolean isStanding;
+
     //Listeners
     public static List<CollisionListener> collisionListeners;
     public static List<UpdateListener> updateListeners;
 
 
     static {
-        collisionListeners = new List<>();
-        updateListeners = new List<>();
+        collisionListeners = new List<CollisionListener>();
+        updateListeners = new List<UpdateListener>();
     }
 
     public GameEngine(Renderer renderer){
         this.renderer = renderer;
-        this.solids = new List<>();
+        this.solids = new List<Solid>();
 
         initializeGameObjects();
     }
 
     public void initializeGameObjects()
     {
-        player = new Player(new Rectangle2D.Double(200, 600, 50, 50), "scr/main/resources/player.png", 1, 10);
+        player = new Player(new Rectangle2D.Double(200, 600, 50, 50), "scr/main/resources/player.png", 1, 20);
         collisionListeners.add(player);
 
         solids.add(new Solid(0, 700,480, 20, "scr/main/resources/wall.png"));
 
+        solids.add(new Solid(300, 500, 200,200, "scr/main/resources/wall.png"));
+
         //Rendering the gameObjects
         renderer.addGameObject(solids.get(0));
+        renderer.addGameObject(solids.get(1));
         renderer.addGameObject(player);
 
     }
@@ -79,17 +86,38 @@ public class GameEngine implements KeyListener {
         //Limiting the players speed
         player.vel.clamp(-player.maxSpeed, player.maxSpeed);
 
+
+
+        checkBoundaries();
+
         movePlayer();
+
+        checkBoundaries();
+
         //renderer.setCameraPosition(0, (int) player.getY() - 650);
 
 
-        System.out.println(player.getY());
+        //System.out.println(player.getY());
     }
+
+
+    public void checkBoundaries(){
+
+    }
+
+    public Shape getShapeAtPoint(double x, double y){
+        for(int i = 0; i < solids.size; i++){
+            if(solids.get(i).getShape().contains(x, y)) return solids.get(i).getShape();
+        }
+        return null;
+    }
+
 
     public void movePlayer(){
 
         //True if the player would collide when moving in a direction
         boolean collides = false;
+        isStanding = false;
 
         for(int i = 0; i < solids.size; i++){
             if(solids.get(i).getCollisionType() == CollisionType.COLLIDE){
@@ -105,6 +133,8 @@ public class GameEngine implements KeyListener {
                         player.vel.y = 0;
                         collides = true;
                     }
+
+                    isStanding = true;
                 }
                 if(new Rectangle2D.Double(gameObjectShape.getX(), gameObjectShape.getY()+player.vel.y, gameObjectShape.getWidth(), gameObjectShape.getHeight()).intersects(bounds)){
                     //Side = TOP
@@ -118,7 +148,7 @@ public class GameEngine implements KeyListener {
                 if(new Rectangle2D.Double(gameObjectShape.getX(), gameObjectShape.getY(), gameObjectShape.getWidth()+player.vel.x, gameObjectShape.getHeight()).intersects(bounds)){
                     //Side = RIGHT
                     if(player.vel.x > 0) {
-                        player.setPos(player.getX(), bounds.getX()-player.getShape().getWidth());
+                        player.setPos(bounds.getX()-player.getShape().getWidth(), player.getY());
                         player.vel.x = 0;
                         collides = true;
                     }
@@ -126,7 +156,7 @@ public class GameEngine implements KeyListener {
                 if(new Rectangle2D.Double(gameObjectShape.getX()+player.vel.x, gameObjectShape.getY(), gameObjectShape.getWidth(), gameObjectShape.getHeight()).intersects(bounds)){
                     //SIDE = LEFT
                     if(player.vel.x < 0) {
-                        player.setPos(player.getX(), bounds.getX()+bounds.getWidth());
+                        player.setPos(bounds.getX()+bounds.getWidth(), player.getY());
                         player.vel.x = 0;
                         collides = true;
                     }
@@ -136,7 +166,7 @@ public class GameEngine implements KeyListener {
 
         if(collides){
             //Simulating friction:
-            player.vel.x = Utils.lerp(player.vel.x, 0, .1f);
+            player.vel.x = Utils.lerp(player.vel.x, 0, .5f);
             player.vel.y = Utils.lerp(player.vel.y, 0, .1f);
         }
         else{
@@ -187,24 +217,27 @@ public class GameEngine implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        System.out.println("key");
+        if(isStanding){
+            if(e.getKeyCode() == KeyEvent.VK_W){
+                storedVel.y -= 10;
+            }
 
-        if(e.getKeyCode() == KeyEvent.VK_W){
-            storedVel.y -= 5;
+            if(e.getKeyCode() == KeyEvent.VK_A){
+                storedVel.x -= 5;
+            }
+
+            if(e.getKeyCode() == KeyEvent.VK_D){
+                storedVel.x += 5;
+            }
         }
 
-        if(e.getKeyCode() == KeyEvent.VK_A){
-            storedVel.x -= 5;
-        }
-
-        if(e.getKeyCode() == KeyEvent.VK_D){
-            storedVel.x += 5;
-        }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        player.vel.add(storedVel);
-        storedVel = new Vector2D(0,0);
+        if(isStanding){
+            player.vel.add(storedVel);
+            storedVel = new Vector2D(0,0);
+        }
     }
 }

@@ -1,7 +1,7 @@
-package net.zelythia.GameObjects;
+package net.zelythia.jump.GameObjects;
 
 
-import net.zelythia.Collision.CollisionType;
+import net.zelythia.jump.Collision.CollisionType;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

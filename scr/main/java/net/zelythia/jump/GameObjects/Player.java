@@ -1,11 +1,12 @@
-package net.zelythia.GameObjects;
+package net.zelythia.jump.GameObjects;
 
-import net.zelythia.*;
-import net.zelythia.Collision.CollisionData;
-import net.zelythia.Collision.CollisionType;
-import net.zelythia.Events.CollisionListener;
-import net.zelythia.Events.UpdateListener;
-import net.zelythia.Utils.Vector2D;
+
+import net.zelythia.jump.Collision.CollisionData;
+import net.zelythia.jump.Collision.CollisionType;
+import net.zelythia.jump.Events.CollisionListener;
+import net.zelythia.jump.Events.UpdateListener;
+import net.zelythia.jump.GameEngine;
+import net.zelythia.jump.Utils.Vector2D;
 
 import java.awt.geom.RectangularShape;
 

@@ -1,4 +1,4 @@
-package net.zelythia.Screens;
+package net.zelythia.jump.Screens;
 
 import javax.swing.*;
 import java.awt.*;
