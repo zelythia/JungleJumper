@@ -1,6 +1,8 @@
 package net.zelythia.jump;
 
 
+import net.zelythia.jump.Utils.List.List;
+
 import javax.swing.*;
 
 public class JumpKing {

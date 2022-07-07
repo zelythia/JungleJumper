@@ -16,7 +16,8 @@ public class List<T> {
     }
 
     public void remove(T d){
-        node.remove(d);
+        node = node.remove(d);
+        size--;
     }
 
     /**
@@ -31,5 +32,10 @@ public class List<T> {
             return x.getData();
         }
         throw new IndexOutOfBoundsException();
+    }
+
+    public void clear(){
+        size = 0;
+        node = new End<>();
     }
 }

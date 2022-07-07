@@ -2,14 +2,10 @@ package net.zelythia.jump;
 
 
 
-import net.zelythia.jump.Collision.CollisionData;
 import net.zelythia.jump.Collision.CollisionType;
-import net.zelythia.jump.Collision.Side;
 import net.zelythia.jump.Events.CollisionListener;
 import net.zelythia.jump.Events.UpdateListener;
-import net.zelythia.jump.GameObjects.GameObject;
-import net.zelythia.jump.GameObjects.Player;
-import net.zelythia.jump.GameObjects.Solid;
+import net.zelythia.jump.GameObjects.*;
 import net.zelythia.jump.Utils.List.List;
 import net.zelythia.jump.Utils.Utils;
 import net.zelythia.jump.Utils.Vector2D;
@@ -26,11 +22,15 @@ public class GameEngine implements KeyListener {
 
     private final Renderer renderer;
 
+    public List<Solid> gameBoundaries;
+    private boolean playerOnGround;
+
+    private long startTime;
+    private float scoreMultiplier;
+
     public Player player;
-    public List<Solid> solids;
+    public List<GameObject> gameObjects;
 
-
-    private boolean isStanding;
 
     //Listeners
     public static List<CollisionListener> collisionListeners;
@@ -38,13 +38,14 @@ public class GameEngine implements KeyListener {
 
 
     static {
-        collisionListeners = new List<CollisionListener>();
-        updateListeners = new List<UpdateListener>();
+        collisionListeners = new List<>();
+        updateListeners = new List<>();
     }
 
     public GameEngine(Renderer renderer){
         this.renderer = renderer;
-        this.solids = new List<Solid>();
+        this.gameObjects = new List<>();
+        this.gameBoundaries = new List<>();
 
         initializeGameObjects();
     }
@@ -52,32 +53,35 @@ public class GameEngine implements KeyListener {
     public void initializeGameObjects()
     {
         player = new Player(new Rectangle2D.Double(200, 600, 50, 50), "scr/main/resources/player.png", 1, 20);
-        collisionListeners.add(player);
 
-        solids.add(new Solid(0, 700,480, 20, "scr/main/resources/wall.png"));
 
-        solids.add(new Solid(300, 500, 200,200, "scr/main/resources/wall.png"));
+        //Game boundaries
+        gameBoundaries.add(new Solid(-6, 0, 1, 800, "scr/main/resources/wall.png"));
+        gameBoundaries.add(new Solid(485, 0, 1, 800, "scr/main/resources/wall.png"));
 
-        //Rendering the gameObjects
-        renderer.addGameObject(solids.get(0));
-        renderer.addGameObject(solids.get(1));
-        renderer.addGameObject(player);
 
+        //Solids
+        gameObjects.add(new Solid(0, 700,480, 20, "scr/main/resources/wall.png"));
+        gameObjects.add(new Solid(300, 500, 200,200, "scr/main/resources/wall.png"));
+
+        //Collectibles
+        gameObjects.add(new Coin(20, 670));
     }
 
 
     public void update(float deltaTime){
 
+        /*
         for(int i = 0; i < collisionListeners.size; i++){
             updateCollisionListeners(collisionListeners.get(i));
-        }
+        }*/
 
         for(int i = 0; i < updateListeners.size; i++){
             updateListeners.get(i).update(deltaTime);
         }
 
 
-//=====Player movement======================================
+        //=====Player movement======================================
 
         //Gravity
         if(player.vel.y < 10){
@@ -86,87 +90,113 @@ public class GameEngine implements KeyListener {
         //Limiting the players speed
         player.vel.clamp(-player.maxSpeed, player.maxSpeed);
 
+        calculatePlayerPhysics();
+        checkPlayerOutOfScreen();
 
+        if(playerOnGround){
+            renderer.setCameraPosition(0, (int) Utils.lerp(renderer.getCameraPosition().y, player.getY() - 500, .05));
+        }
 
-        checkBoundaries();
+        //========================================================
 
-        movePlayer();
-
-        checkBoundaries();
-
-        //renderer.setCameraPosition(0, (int) player.getY() - 650);
-
+        checkPlayerCollision();
 
         //System.out.println(player.getY());
     }
 
+    public void render(Graphics graphics){
 
-    public void checkBoundaries(){
+        renderer.clearGameObjects();
 
-    }
-
-    public Shape getShapeAtPoint(double x, double y){
-        for(int i = 0; i < solids.size; i++){
-            if(solids.get(i).getShape().contains(x, y)) return solids.get(i).getShape();
+        //Rendering the gameObjects
+        for(int i = 0; i < gameObjects.size; i++){
+            renderer.addGameObject(gameObjects.get(i));
         }
-        return null;
+        renderer.addGameObject(player);
+
+        renderer.render(graphics);
     }
 
 
-    public void movePlayer(){
+
+    public void checkPlayerOutOfScreen(){
+        if(player.getX() <  -player.getShape().getWidth()/2){
+            player.setPos(480 - player.getShape().getWidth()/2, player.getY());
+        }
+        else if(player.getX() > 480 + player.getShape().getWidth()/2){
+            player.setPos(-player.getShape().getWidth()/2, player.getY());
+        }
+    }
+
+    public void calculatePlayerPhysics(){
 
         //True if the player would collide when moving in a direction
         boolean collides = false;
-        isStanding = false;
+        playerOnGround = false;
 
-        for(int i = 0; i < solids.size; i++){
-            if(solids.get(i).getCollisionType() == CollisionType.COLLIDE){
-                Rectangle2D bounds = solids.get(i).getShape().getBounds2D();
+        List<RectangularShape> possibleColliders = new List<>();
 
-                RectangularShape gameObjectShape = player.getShape();
 
-                //Extending the bounds of the Rectangle on the side to calculate collision when gamObjects are touching and not when overlapping
-                if(new Rectangle2D.Double(gameObjectShape.getX(), gameObjectShape.getY(), gameObjectShape.getWidth(), gameObjectShape.getHeight()+player.vel.y).intersects(bounds)){
-                    //Side = BOTTOM
-                    if(player.vel.y > 0){
-                        player.setPos(player.getX() + player.vel.x, bounds.getY()-player.getShape().getHeight());
-                        player.vel.y = 0;
-                        collides = true;
-                    }
+        for(int i = 0; i < gameObjects.size; i++){
+            if(gameObjects.get(i).getCollisionType() == CollisionType.COLLIDE){
+                possibleColliders.add(gameObjects.get(i).getShape());
 
-                    isStanding = true;
-                }
-                if(new Rectangle2D.Double(gameObjectShape.getX(), gameObjectShape.getY()+player.vel.y, gameObjectShape.getWidth(), gameObjectShape.getHeight()).intersects(bounds)){
-                    //Side = TOP
-                    if(player.vel.y < 0){
-                        player.setPos(player.getX() + player.vel.x, bounds.getY()+bounds.getHeight());
-                        player.vel.y = 0;
-                        collides = true;
-                    }
+                if(gameObjects.get(i).getX() + gameObjects.get(i).getShape().getWidth() >= 480){
+                    possibleColliders.add(new Rectangle2D.Double(-1, gameObjects.get(i).getY(), 1, gameObjects.get(i).getShape().getHeight()));
                 }
 
-                if(new Rectangle2D.Double(gameObjectShape.getX(), gameObjectShape.getY(), gameObjectShape.getWidth()+player.vel.x, gameObjectShape.getHeight()).intersects(bounds)){
-                    //Side = RIGHT
-                    if(player.vel.x > 0) {
-                        player.setPos(bounds.getX()-player.getShape().getWidth(), player.getY());
-                        player.vel.x = 0;
-                        collides = true;
-                    }
+                if(gameObjects.get(i).getX()+ gameObjects.get(i).getShape().getWidth() <= 0){
+                    possibleColliders.add(new Rectangle2D.Double(481, gameObjects.get(i).getY(), 1, gameObjects.get(i).getShape().getHeight()));
                 }
-                if(new Rectangle2D.Double(gameObjectShape.getX()+player.vel.x, gameObjectShape.getY(), gameObjectShape.getWidth(), gameObjectShape.getHeight()).intersects(bounds)){
-                    //SIDE = LEFT
-                    if(player.vel.x < 0) {
-                        player.setPos(bounds.getX()+bounds.getWidth(), player.getY());
-                        player.vel.x = 0;
-                        collides = true;
-                    }
+            }
+        }
+
+        for(int i = 0; i < possibleColliders.size; i++){
+            Rectangle2D bounds = possibleColliders.get(i).getBounds2D();
+
+            RectangularShape gameObjectShape = player.getShape();
+
+            //Extending the bounds of the Rectangle on the side to calculate collision when gamObjects are touching and not when overlapping
+            if(new Rectangle2D.Double(gameObjectShape.getX(), gameObjectShape.getY(), gameObjectShape.getWidth(), gameObjectShape.getHeight()+player.vel.y).intersects(bounds)){
+                //Side = BOTTOM
+                if(player.vel.y > 0){
+                    player.setPos(player.getX() + player.vel.x, bounds.getY()-player.getShape().getHeight());
+                    player.vel.y = 0;
+                    collides = true;
+                }
+
+                playerOnGround = true;
+            }
+            if(new Rectangle2D.Double(gameObjectShape.getX(), gameObjectShape.getY()+player.vel.y, gameObjectShape.getWidth(), gameObjectShape.getHeight()).intersects(bounds)){
+                //Side = TOP
+                if(player.vel.y < 0){
+                    player.setPos(player.getX() + player.vel.x, bounds.getY()+bounds.getHeight());
+                    //player.vel.y = 0;
+                    collides = true;
+                }
+            }
+
+            if(new Rectangle2D.Double(gameObjectShape.getX(), gameObjectShape.getY(), gameObjectShape.getWidth()+player.vel.x, gameObjectShape.getHeight()).intersects(bounds)){
+                //Side = RIGHT
+                if(player.vel.x > 0) {
+                    player.setPos(bounds.getX()-player.getShape().getWidth(), player.getY() + player.vel.y);
+                    //player.vel.x = 0;
+                    collides = true;
+                }
+            }
+            if(new Rectangle2D.Double(gameObjectShape.getX()+player.vel.x, gameObjectShape.getY(), gameObjectShape.getWidth(), gameObjectShape.getHeight()).intersects(bounds)){
+                //SIDE = LEFT
+                if(player.vel.x < 0) {
+                    player.setPos(bounds.getX()+bounds.getWidth(), player.getY() +  player.vel.y);
+                    //player.vel.x = 0;
+                    collides = true;
                 }
             }
         }
 
         if(collides){
             //Simulating friction:
-            player.vel.x = Utils.lerp(player.vel.x, 0, .5f);
+            player.vel.x = Utils.lerp(player.vel.x, 0, .25f);
             player.vel.y = Utils.lerp(player.vel.y, 0, .1f);
         }
         else{
@@ -175,35 +205,49 @@ public class GameEngine implements KeyListener {
 
     }
 
-    public void updateCollisionListeners(CollisionListener listener){
-        //TODO make new list and add all future game Objects
-        for(int i = 0; i < solids.size; i++){
-            Rectangle2D bounds = solids.get(i).getShape().getBounds2D();
+    public void checkPlayerCollision(){
 
-            if(listener instanceof GameObject gameObject){
-                RectangularShape gameObjectShape = gameObject.getShape();
+        List<GameObject> possibleCollisions = new List<>();
+        for(int i = 0; i < gameObjects.size; i++){
+            possibleCollisions.add(gameObjects.get(i));
+        }
 
-                //Extending the bounds of the Rectangle on the side to calculate collision when gamObjects are touching and not when overlapping
-                if(gameObjectShape.intersects(bounds)){
-                    listener.onCollision(new CollisionData(solids.get(i), Side.BOTTOM));
+        for(int i = 0; i < possibleCollisions.size; i++){
+            if(player.getShape().intersects(possibleCollisions.get(i).getShape().getBounds2D())){
+                if(possibleCollisions.get(i).getCollisionType() == CollisionType.INTERACTION){
+
                 }
-                if(gameObjectShape.intersects(bounds)){
-                    listener.onCollision(new CollisionData(solids.get(i), Side.RIGHT));
-                }
-                if(gameObjectShape.intersects(bounds)){
-                    listener.onCollision(new CollisionData(solids.get(i), Side.TOP));
-                }
-                if(gameObjectShape.intersects(bounds)){
-                    listener.onCollision(new CollisionData(solids.get(i), Side.LEFT));
+
+                if(possibleCollisions.get(i) instanceof Collectible collectible) {
+                    collectible.onCollect(this);
                 }
             }
         }
     }
 
-    public void render(Graphics graphics){
-        renderer.render(graphics);
+
+    public void addScoreMultiplier(float multiplier){
+        this.scoreMultiplier += multiplier;
     }
 
+    public void levelFinished(){
+        long endTime = System.currentTimeMillis();
+
+        System.out.println("Time: " + (endTime - startTime) / 1000 + "seconds");
+        System.out.println("Score: " + (100000*scoreMultiplier)/(endTime - startTime));
+    }
+
+
+    public Shape getShapeAtPoint(double x, double y){
+        for(int i = 0; i < gameObjects.size; i++){
+            if(gameObjects.get(i).getShape().contains(x, y)) return gameObjects.get(i).getShape();
+        }
+        return null;
+    }
+
+    public void removeGameObject(GameObject object){
+        gameObjects.remove(object);
+    }
 
 
 //=======EVENTS=========================================================================================================
@@ -212,12 +256,12 @@ public class GameEngine implements KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {
-
+        if(startTime==0) startTime = System.currentTimeMillis();
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(isStanding){
+        if(playerOnGround){
             if(e.getKeyCode() == KeyEvent.VK_W){
                 storedVel.y -= 10;
             }
@@ -229,15 +273,18 @@ public class GameEngine implements KeyListener {
             if(e.getKeyCode() == KeyEvent.VK_D){
                 storedVel.x += 5;
             }
-        }
 
+            player.setSprite("scr/main/resources/player_charging.png");
+        }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if(isStanding){
+        if(playerOnGround){
+            storedVel.clamp(-50, 50);
             player.vel.add(storedVel);
             storedVel = new Vector2D(0,0);
         }
+        player.setSprite("scr/main/resources/player.png");
     }
 }

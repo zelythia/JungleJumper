@@ -2,6 +2,7 @@ package net.zelythia.jump;
 
 import net.zelythia.jump.GameObjects.GameObject;
 import net.zelythia.jump.Utils.List.List;
+import net.zelythia.jump.Utils.Vector2D;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,9 +27,16 @@ public class GameRenderer extends JPanel implements Renderer {
         gameObjects = new List<GameObject>();
     }
 
-
+    /**
+     * Newly added gameObjects will be rendered in front of the others
+     */
     public void addGameObject(GameObject gameObject){
         gameObjects.add(gameObject);
+    }
+
+    @Override
+    public void clearGameObjects(){
+        gameObjects.clear();
     }
 
 
@@ -38,7 +46,7 @@ public class GameRenderer extends JPanel implements Renderer {
 
         //Drawing the background
         g.setColor(new Color(51, 102, 0));
-        g.fillRect(camX,camY,camWidth,camHeight);
+        g.fillRect(0, 0, 480, 800);
 
         //Camera debugging
         //g.setColor(new Color(0,0,0,40));
@@ -72,6 +80,11 @@ public class GameRenderer extends JPanel implements Renderer {
     public void setCameraPosition(int x, int y){
         this.camX = x;
         this.camY = y;
+    }
+
+    @Override
+    public Vector2D getCameraPosition() {
+        return new Vector2D(camX,camY);
     }
 
     @Override
