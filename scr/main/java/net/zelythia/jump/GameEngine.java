@@ -13,8 +13,7 @@ import net.zelythia.jump.Utils.Vector2D;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RectangularShape;
+import java.awt.geom.*;
 
 
 //Game controller = Game engine = Control
@@ -52,7 +51,7 @@ public class GameEngine implements KeyListener {
 
     public void initializeGameObjects()
     {
-        player = new Player(new Rectangle2D.Double(200, 600, 50, 50), "scr/main/resources/player.png", 1, 20);
+        player = new Player(new Rectangle2D.Double(201, 200, 50, 50), "scr/main/resources/player.png", 20);
 
 
         //Game boundaries
@@ -62,7 +61,8 @@ public class GameEngine implements KeyListener {
 
         //Solids
         gameObjects.add(new Solid(0, 700,480, 20, "scr/main/resources/wall.png"));
-        gameObjects.add(new Solid(300, 500, 200,200, "scr/main/resources/wall.png"));
+       // gameObjects.add(new Solid(300, 500, 200,200, "scr/main/resources/wall.png"));
+
 
         //Collectibles
         gameObjects.add(new Coin(20, 670));
@@ -84,24 +84,25 @@ public class GameEngine implements KeyListener {
         //=====Player movement======================================
 
         //Gravity
-        if(player.vel.y < 10){
+        if(player.vel.y < 10 && !playerOnGround){
             player.vel.y += 1;
         }
         //Limiting the players speed
         player.vel.clamp(-player.maxSpeed, player.maxSpeed);
 
-        calculatePlayerPhysics();
+        movePlayer();
         checkPlayerOutOfScreen();
 
         if(playerOnGround){
+            addPlayerFriction();
             renderer.setCameraPosition(0, (int) Utils.lerp(renderer.getCameraPosition().y, player.getY() - 500, .05));
         }
+
 
         //========================================================
 
         checkPlayerCollision();
 
-        //System.out.println(player.getY());
     }
 
     public void render(Graphics graphics){
@@ -123,86 +124,101 @@ public class GameEngine implements KeyListener {
         if(player.getX() <  -player.getShape().getWidth()/2){
             player.setPos(480 - player.getShape().getWidth()/2, player.getY());
         }
-        else if(player.getX() > 480 + player.getShape().getWidth()/2){
+        else if(player.getX() > 480 - player.getShape().getWidth()/2){
             player.setPos(-player.getShape().getWidth()/2, player.getY());
         }
     }
 
-    public void calculatePlayerPhysics(){
-
-        //True if the player would collide when moving in a direction
-        boolean collides = false;
-        playerOnGround = false;
-
-        List<RectangularShape> possibleColliders = new List<>();
-
+    public GameObject getPlayerPhysicsColliderOnMove(double x, double y, double w, double h){
+        List<GameObject> possibleColliders = new List<>();
 
         for(int i = 0; i < gameObjects.size; i++){
             if(gameObjects.get(i).getCollisionType() == CollisionType.COLLIDE){
-                possibleColliders.add(gameObjects.get(i).getShape());
+                possibleColliders.add(gameObjects.get(i));
 
-                if(gameObjects.get(i).getX() + gameObjects.get(i).getShape().getWidth() >= 480){
-                    possibleColliders.add(new Rectangle2D.Double(-1, gameObjects.get(i).getY(), 1, gameObjects.get(i).getShape().getHeight()));
+                if(gameObjects.get(i).getX() + gameObjects.get(i).getBounds().getWidth() >= 480){
+                    possibleColliders.add(new Solid(-1, gameObjects.get(i).getY(), 1, gameObjects.get(i).getBounds().getHeight(), ""));
                 }
 
-                if(gameObjects.get(i).getX()+ gameObjects.get(i).getShape().getWidth() <= 0){
-                    possibleColliders.add(new Rectangle2D.Double(481, gameObjects.get(i).getY(), 1, gameObjects.get(i).getShape().getHeight()));
+                if(gameObjects.get(i).getX()+ gameObjects.get(i).getBounds().getWidth() <= 0){
+                    possibleColliders.add(new Solid(481, gameObjects.get(i).getY(), 1, gameObjects.get(i).getBounds().getHeight(), ""));
                 }
             }
         }
 
         for(int i = 0; i < possibleColliders.size; i++){
-            Rectangle2D bounds = possibleColliders.get(i).getBounds2D();
+            if(possibleColliders.get(i).getShape().intersects(x, y, w, h)) return possibleColliders.get(i);
+        }
 
-            RectangularShape gameObjectShape = player.getShape();
+        return null;
+    }
 
-            //Extending the bounds of the Rectangle on the side to calculate collision when gamObjects are touching and not when overlapping
-            if(new Rectangle2D.Double(gameObjectShape.getX(), gameObjectShape.getY(), gameObjectShape.getWidth(), gameObjectShape.getHeight()+player.vel.y).intersects(bounds)){
-                //Side = BOTTOM
-                if(player.vel.y > 0){
-                    player.setPos(player.getX() + player.vel.x, bounds.getY()-player.getShape().getHeight());
+    public void movePlayer(){
+
+        double slopeInteraction = 0;
+
+        //DOWN
+        for(int i = 0; i < player.vel.y; i++){
+            GameObject collider = getPlayerPhysicsColliderOnMove(player.getX(), player.getY()+1, player.getShape().getWidth(), player.getShape().getHeight());
+            if(collider == null){
+                player.setPos(player.getX(), player.getY()+1);
+            }
+            else {
+                addPlayerFriction();
+                if(collider instanceof Slope slope && slope.getSlopeCollisionInteraction() != 0){
+                    player.setPos(player.getX()+slope.getSlopeCollisionInteraction(), player.getY());
+                    slopeInteraction = slope.getSlopeCollisionInteraction();
+                }
+                else{
                     player.vel.y = 0;
-                    collides = true;
-                }
-
-                playerOnGround = true;
-            }
-            if(new Rectangle2D.Double(gameObjectShape.getX(), gameObjectShape.getY()+player.vel.y, gameObjectShape.getWidth(), gameObjectShape.getHeight()).intersects(bounds)){
-                //Side = TOP
-                if(player.vel.y < 0){
-                    player.setPos(player.getX() + player.vel.x, bounds.getY()+bounds.getHeight());
-                    //player.vel.y = 0;
-                    collides = true;
-                }
-            }
-
-            if(new Rectangle2D.Double(gameObjectShape.getX(), gameObjectShape.getY(), gameObjectShape.getWidth()+player.vel.x, gameObjectShape.getHeight()).intersects(bounds)){
-                //Side = RIGHT
-                if(player.vel.x > 0) {
-                    player.setPos(bounds.getX()-player.getShape().getWidth(), player.getY() + player.vel.y);
-                    //player.vel.x = 0;
-                    collides = true;
-                }
-            }
-            if(new Rectangle2D.Double(gameObjectShape.getX()+player.vel.x, gameObjectShape.getY(), gameObjectShape.getWidth(), gameObjectShape.getHeight()).intersects(bounds)){
-                //SIDE = LEFT
-                if(player.vel.x < 0) {
-                    player.setPos(bounds.getX()+bounds.getWidth(), player.getY() +  player.vel.y);
-                    //player.vel.x = 0;
-                    collides = true;
+                    playerOnGround = true;
+                    break;
                 }
             }
         }
-
-        if(collides){
-            //Simulating friction:
-            player.vel.x = Utils.lerp(player.vel.x, 0, .25f);
-            player.vel.y = Utils.lerp(player.vel.y, 0, .1f);
+        //UP
+        for(int i = 0; i > player.vel.y; i--){
+            playerOnGround = false;
+            if(getPlayerPhysicsColliderOnMove(player.getX(), player.getY()-1, player.getShape().getWidth(), player.getShape().getHeight()) == null){
+                player.setPos(player.getX(), player.getY()-1);
+            }
+            else{
+                player.vel.y = 0;
+                break;
+            }
         }
-        else{
-            player.setPos(player.getX() + player.vel.x, player.getY() + player.vel.y);
+
+        //RIGHT
+        for(int i = 0; i < player.vel.x; i++){
+            if(getPlayerPhysicsColliderOnMove(player.getX()+1, player.getY(), player.getShape().getWidth(), player.getShape().getHeight()) == null){
+                player.setPos(player.getX()+1, player.getY());
+            }
+            else{
+                addPlayerFriction();
+                break;
+            }
         }
 
+        //LEFT
+        for(int i = 0; i > player.vel.x; i--){
+            if(getPlayerPhysicsColliderOnMove(player.getX()-1, player.getY(), player.getShape().getWidth(), player.getShape().getHeight()) == null){
+                player.setPos(player.getX()-1, player.getY());
+            }
+            else{
+                addPlayerFriction();
+                break;
+            }
+        }
+
+        if (slopeInteraction != 0){
+            player.vel.x = 0;
+        }
+    }
+
+
+
+    public void addPlayerFriction(){
+        player.vel.x = Math.round(Utils.lerp(player.vel.x, 0, .6f) * 1000d) / 1000d;
     }
 
     public void checkPlayerCollision(){
@@ -225,19 +241,6 @@ public class GameEngine implements KeyListener {
         }
     }
 
-
-    public void addScoreMultiplier(float multiplier){
-        this.scoreMultiplier += multiplier;
-    }
-
-    public void levelFinished(){
-        long endTime = System.currentTimeMillis();
-
-        System.out.println("Time: " + (endTime - startTime) / 1000 + "seconds");
-        System.out.println("Score: " + (100000*scoreMultiplier)/(endTime - startTime));
-    }
-
-
     public Shape getShapeAtPoint(double x, double y){
         for(int i = 0; i < gameObjects.size; i++){
             if(gameObjects.get(i).getShape().contains(x, y)) return gameObjects.get(i).getShape();
@@ -249,6 +252,18 @@ public class GameEngine implements KeyListener {
         gameObjects.remove(object);
     }
 
+
+
+    public void addScoreMultiplier(float multiplier){
+        this.scoreMultiplier += multiplier;
+    }
+
+    public void levelFinished(){
+        long endTime = System.currentTimeMillis();
+
+        System.out.println("Time: " + (endTime - startTime) / 1000 + " seconds");
+        System.out.println("Score: " + (100000*scoreMultiplier)/(endTime - startTime));
+    }
 
 //=======EVENTS=========================================================================================================
 

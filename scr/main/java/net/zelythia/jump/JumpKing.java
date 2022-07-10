@@ -29,7 +29,7 @@ public class JumpKing {
     long WAIT_TIME = 16666666L;
 
     public void initializeGameScene(){
-        GameRenderer panel = new GameRenderer();
+        GameRenderer panel = new GameRenderer.DebugRenderer();
         windowManager.setPanel(panel);
 
 
@@ -38,7 +38,7 @@ public class JumpKing {
         windowManager.addKeyListener(engine);
 
         //For debugging only
-        //WAIT_TIME = 150000000L;
+//        WAIT_TIME = 150000000L;
 
         //Creating the game loop
         new Thread( () -> {

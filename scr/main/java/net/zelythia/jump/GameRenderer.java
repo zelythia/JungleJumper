@@ -17,7 +17,6 @@ public class GameRenderer extends JPanel implements Renderer {
     private int camWidth;
     private int camHeight;
 
-
     public List<GameObject> gameObjects;
 
     public GameRenderer(){
@@ -25,6 +24,16 @@ public class GameRenderer extends JPanel implements Renderer {
         this.setCameraBounds(0,0,480,800);
 
         gameObjects = new List<GameObject>();
+
+
+    }
+
+    public JPanel createUI(){
+        JPanel ui = new JPanel();
+
+
+
+        return ui;
     }
 
     /**
@@ -48,14 +57,12 @@ public class GameRenderer extends JPanel implements Renderer {
         g.setColor(new Color(51, 102, 0));
         g.fillRect(0, 0, 480, 800);
 
-        //Camera debugging
-        //g.setColor(new Color(0,0,0,40));
-        //g.fillRect(camX+20,camY+20,camWidth-40,camHeight-40);
+
+
 
         RectangularShape camera = new Rectangle2D.Double(camX, camY, camWidth, camHeight);
 
         for(int i = 0; i < gameObjects.size; i++){
-
             GameObject gameObject = gameObjects.get(i);
 
             //If the gameObjects is inside the camera i.e. visible -> Draw the gameObject
@@ -63,7 +70,7 @@ public class GameRenderer extends JPanel implements Renderer {
                 g.drawImage(
                         gameObject.getSprite(),
                         (int) (gameObject.getX() - camX), (int) (gameObject.getY() - camY),
-                        (int) gameObject.getShape().getWidth(), (int) gameObject.getShape().getHeight(),
+                        (int) gameObject.getBounds().getWidth(), (int) gameObject.getBounds().getHeight(),
                         this
                 );
             }
@@ -90,5 +97,31 @@ public class GameRenderer extends JPanel implements Renderer {
     @Override
     public void render(Graphics graphics) {
         super.repaint();
+    }
+
+
+    public static class DebugRenderer extends GameRenderer{
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+
+            //Drawing the background
+            g.setColor(Color.DARK_GRAY);
+            g.fillRect(0, 0, 480, 800);
+
+
+            for(int i = 0; i < gameObjects.size; i++){
+                g.setColor(Color.CYAN);
+
+                GameObject gameObject = gameObjects.get(i);
+                if(gameObject.getShape() instanceof Polygon polygon){
+                    g.drawPolygon(polygon);
+                }
+                else if(gameObject.getShape() instanceof RectangularShape shape){
+                    g.drawRect((int) shape.getBounds2D().getX(), (int) shape.getBounds2D().getY(), (int) shape.getBounds2D().getWidth(), (int) shape.getBounds2D().getHeight());
+                }
+            }
+
+        }
     }
 }

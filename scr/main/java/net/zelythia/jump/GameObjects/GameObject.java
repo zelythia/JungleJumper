@@ -5,24 +5,28 @@ import net.zelythia.jump.Collision.CollisionType;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 
 //Model
 public abstract class GameObject{
 
-    private RectangularShape shape;
+    protected Shape shape;
     private Image sprite;
     private CollisionType collisionType;
 
-    public GameObject(RectangularShape shape, String sprite){
+    public GameObject(Shape shape, String sprite){
         this.shape = shape;
-        try {
-            this.sprite = ImageIO.read(new File(sprite));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if(!sprite.equals("")){
+            try {
+                this.sprite = ImageIO.read(new File(sprite));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         collisionType = CollisionType.NONE;
     }
@@ -32,8 +36,12 @@ public abstract class GameObject{
     {
         this.shape = shape;
     }
-    public RectangularShape getShape() {
+    public Shape getShape() {
         return shape;
+    }
+
+    public Rectangle2D getBounds(){
+        return shape.getBounds2D();
     }
 
     public void setSprite(String sprite){
@@ -49,15 +57,15 @@ public abstract class GameObject{
     }
 
     public void setPos(double x, double y){
-        this.shape.setFrame(x, y, this.shape.getWidth(), this.shape.getHeight());
+
     }
 
     public double getX(){
-        return shape.getX();
+        return shape.getBounds2D().getX();
     }
 
     public double getY(){
-        return shape.getY();
+        return shape.getBounds().getY();
     }
 
     public void setCollisionType(CollisionType type){

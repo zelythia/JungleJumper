@@ -17,5 +17,16 @@ public class Solid extends GameObject{
         super.setCollisionType(CollisionType.COLLIDE);
     }
 
+    @Override
+    public void setPos(double x, double y) {
+        RectangularShape shape = (RectangularShape) super.getShape();
+        shape.setFrame(x, y, shape.getWidth(), shape.getHeight());
+    }
+
+    @Override
+    public RectangularShape getShape() {
+        return (RectangularShape) super.getShape();
+    }
+
 
 }
