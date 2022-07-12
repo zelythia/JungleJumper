@@ -59,9 +59,32 @@ public class GameEngine implements KeyListener {
         gameBoundaries.add(new Solid(485, 0, 1, 800, "scr/main/resources/wall.png"));
 
 
+        //y geht nach unten; 0,0 linke obere ecke
+        //480x800
+
         //Solids
-        gameObjects.add(new Solid(0, 700,480, 20, "scr/main/resources/wall.png"));
-       // gameObjects.add(new Solid(300, 500, 200,200, "scr/main/resources/wall.png"));
+        gameObjects.add(new Solid(0, 700,480, 20, "scr/main/resources/wall.png"));      //Boden
+        gameObjects.add(new Solid(300, 500, 166,200, "scr/main/resources/wall.png"));   //Startblock rechts
+        gameObjects.add(new Solid(0, 500, 166, 200, "scr/main/resources/wall.png"));    //Startblock links
+        //Block 1
+        gameObjects.add(new Solid(130 , 300, 140, 70, "scr/main/resources/wall.png"));
+        //Block 2
+        gameObjects.add(new Solid(0, 100, 140, 100, "scr/main/resources/wall.png"));
+        gameObjects.add(Slope.Down(140, 100, 26, 100));
+        //Block 3
+        gameObjects.add(new Solid(400, 100, 160, 100, "scr/main/resources/wall.png"));
+        gameObjects.add(Slope.Up(350, 100, 50, 100));
+        //Block 4
+        gameObjects.add(Slope.DownInv(175, -30, 75, 200));
+        gameObjects.add(Slope.UpInv(250, -50, 100, 220));
+        gameObjects.add(new Solid(0, -50, 250, 50, "scr/main/resources/wall.png"));
+        //Block 5
+        gameObjects.add(new Solid(220, -250, 100, 75, "scr/main/resources/wall.png"));
+        gameObjects.add(new Solid(320, -295, 100, 120, "scr/main/resources/wall.png"));
+        //Block 6
+        
+
+
 
 
         //Collectibles
