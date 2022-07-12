@@ -19,7 +19,7 @@ import java.awt.geom.*;
 //Game controller = Game engine = Control
 public class GameEngine implements KeyListener {
 
-    private final Renderer renderer;
+    private final GameRenderer renderer;
 
     public List<Solid> gameBoundaries;
     private boolean playerOnGround;
@@ -41,7 +41,7 @@ public class GameEngine implements KeyListener {
         updateListeners = new List<>();
     }
 
-    public GameEngine(Renderer renderer){
+    public GameEngine(GameRenderer renderer){
         this.renderer = renderer;
         this.gameObjects = new List<>();
         this.gameBoundaries = new List<>();
@@ -126,6 +126,10 @@ public class GameEngine implements KeyListener {
 
         checkPlayerCollision();
 
+        //========================================================
+
+        renderer.setScoreMulti(scoreMultiplier);
+        renderer.setTimer((float) ((System.currentTimeMillis() - startTime) / 1000));
     }
 
     public void render(Graphics graphics){
@@ -179,6 +183,7 @@ public class GameEngine implements KeyListener {
     public void movePlayer(){
 
         double slopeInteraction = 0;
+        playerOnGround = false;
 
         //DOWN
         for(int i = 0; i < player.vel.y; i++){
@@ -234,7 +239,11 @@ public class GameEngine implements KeyListener {
         }
 
         if (slopeInteraction != 0){
+            //Player collided with slope
             player.vel.x = 0;
+        }
+        else{
+            playerOnGround = getPlayerPhysicsColliderOnMove(player.getX(), player.getY()+1, player.getShape().getWidth(), player.getShape().getHeight()) != null;
         }
     }
 
