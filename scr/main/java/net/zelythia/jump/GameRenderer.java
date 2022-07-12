@@ -25,15 +25,42 @@ public class GameRenderer extends JPanel implements Renderer {
 
         gameObjects = new List<GameObject>();
 
-
+        createUI();
     }
 
-    public JPanel createUI(){
-        JPanel ui = new JPanel();
+    JLabel scoreMultiLabel;
+    JLabel timerLabel;
 
+    public void createUI(){
+        SpringLayout layout = new SpringLayout();
+        this.setLayout(layout);
 
+        scoreMultiLabel = new JLabel();
+        this.add(scoreMultiLabel);
+        scoreMultiLabel.setOpaque(true);
+        scoreMultiLabel.setBackground(new Color(0,0,0,0));
+        scoreMultiLabel.setForeground(new Color(255, 255, 255));
+        scoreMultiLabel.setFont(new Font(Font.MONOSPACED, Font.BOLD,  25));
+        layout.putConstraint(SpringLayout.WEST, scoreMultiLabel, 10, SpringLayout.WEST, this);
+        layout.putConstraint(SpringLayout.NORTH, scoreMultiLabel, 5, SpringLayout.NORTH, this);
 
-        return ui;
+        timerLabel = new JLabel();
+        this.add(timerLabel);
+        timerLabel.setOpaque(true);
+        timerLabel.setBackground(new Color(0,0,0,0));
+        timerLabel.setForeground(new Color(255, 255, 255));
+        timerLabel.setFont(new Font(Font.MONOSPACED, Font.BOLD,  25));
+
+        layout.putConstraint(SpringLayout.EAST, timerLabel, -10, SpringLayout.EAST, this);
+        layout.putConstraint(SpringLayout.NORTH, timerLabel, 5, SpringLayout.NORTH, this);
+    }
+
+    public void setScoreMulti(Float m){
+        scoreMultiLabel.setText(Float.toString(m));
+    }
+
+    public void setTimer(Float t){
+        timerLabel.setText(Float.toString(t));
     }
 
     /**
@@ -56,8 +83,6 @@ public class GameRenderer extends JPanel implements Renderer {
         //Drawing the background
         g.setColor(new Color(51, 102, 0));
         g.fillRect(0, 0, 480, 800);
-
-
 
 
         RectangularShape camera = new Rectangle2D.Double(camX, camY, camWidth, camHeight);
