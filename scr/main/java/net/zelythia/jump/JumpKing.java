@@ -29,7 +29,7 @@ public class JumpKing {
     long WAIT_TIME = 16666666L;
 
     public void initializeGameScene(){
-        GameRenderer panel = new GameRenderer.DebugRenderer();
+        GameRenderer panel = new GameRenderer();
         windowManager.setPanel(panel);
 
 
