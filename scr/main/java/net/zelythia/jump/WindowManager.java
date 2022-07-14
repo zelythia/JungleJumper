@@ -11,7 +11,8 @@ public class WindowManager extends JFrame {
         this.setVisible(true);
         this.setFocusable(true);
 
-        this.setSize(480, 800);
+        this.setSize(496, 800);
+//        this.setSize(580, 900);
         this.setResizable(false);
     }
 

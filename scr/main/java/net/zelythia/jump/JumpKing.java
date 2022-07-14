@@ -1,6 +1,8 @@
 package net.zelythia.jump;
 
 
+import com.sun.tools.javac.Main;
+import net.zelythia.jump.Screens.MainMenu;
 import net.zelythia.jump.Utils.List.List;
 
 import javax.swing.*;
@@ -12,7 +14,7 @@ public class JumpKing {
         new JumpKing();
     }
 
-    private final WindowManager windowManager;
+    public static WindowManager windowManager;
 
     public JumpKing(){
 
@@ -20,16 +22,21 @@ public class JumpKing {
 
         test();
 
-        initializeGameScene();
+        initializeMainMenu();
     }
 
     public void test(){
-
+        new DB();
     }
 
-    long WAIT_TIME = 16666666L;
 
-    public void initializeGameScene(){
+    public static void initializeMainMenu(){
+        windowManager.setPanel(new MainMenu());
+    }
+
+
+    static long WAIT_TIME = 16666666L;
+    public static void initializeGameScene(){
         GameRenderer panel = new GameRenderer();
         windowManager.setPanel(panel);
 

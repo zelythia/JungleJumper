@@ -21,14 +21,15 @@ public class GameEngine implements KeyListener {
 
     private final GameRenderer renderer;
 
-    public List<Solid> gameBoundaries;
     private boolean playerOnGround;
+    private Interactible interactiveObject;
 
     private long startTime;
     private float scoreMultiplier;
 
     public Player player;
     public List<GameObject> gameObjects;
+    public List<GameObject> temporalRenderedObjects;
 
 
     //Listeners
@@ -44,28 +45,22 @@ public class GameEngine implements KeyListener {
     public GameEngine(GameRenderer renderer){
         this.renderer = renderer;
         this.gameObjects = new List<>();
-        this.gameBoundaries = new List<>();
+        temporalRenderedObjects = new List<>();
 
         initializeGameObjects();
     }
 
     public void initializeGameObjects()
     {
-        player = new Player(new Rectangle2D.Double(201, 200, 50, 50), "scr/main/resources/player.png", 20);
-
-
-        //Game boundaries
-        gameBoundaries.add(new Solid(-6, 0, 1, 800, "scr/main/resources/wall.png"));
-        gameBoundaries.add(new Solid(485, 0, 1, 800, "scr/main/resources/wall.png"));
-
+        player = new Player(new Rectangle2D.Double(220, 645, 50, 50), "scr/main/resources/player.png", 20);
 
         //y geht nach unten; 0,0 linke obere ecke
         //480x800
-
         //Solids
         gameObjects.add(new Solid(0, 700,480, 20, "scr/main/resources/wall.png"));      //Boden
-        gameObjects.add(new Solid(300, 500, 166,200, "scr/main/resources/wall.png"));   //Startblock rechts
-        gameObjects.add(new Solid(0, 500, 166, 200, "scr/main/resources/wall.png"));    //Startblock links
+
+        gameObjects.add(new Solid(320, 500, 160,200, "scr/main/resources/wall.png"));   //Startblock rechts
+        gameObjects.add(new Solid(0, 500, 160, 200, "scr/main/resources/wall.png"));    //Startblock links
         //Block 1
         gameObjects.add(new Solid(130 , 300, 140, 70, "scr/main/resources/wall.png"));
         //Block 2
@@ -82,17 +77,19 @@ public class GameEngine implements KeyListener {
         gameObjects.add(new Solid(220, -250, 100, 75, "scr/main/resources/wall.png"));
         gameObjects.add(new Solid(320, -295, 100, 120, "scr/main/resources/wall.png"));
         //Block 6
-        
-
-
 
 
         //Collectibles
-        gameObjects.add(new Coin(20, 670));
+        gameObjects.add(new Coin(30, 70));
+
+        //Interactible
+        gameObjects.add(new Vine(new Rectangle2D.Double(220,370,10,150), "scr/main/resources/vine.png"));
+
     }
 
 
     public void update(float deltaTime){
+        temporalRenderedObjects.clear();
 
         /*
         for(int i = 0; i < collisionListeners.size; i++){
@@ -120,6 +117,10 @@ public class GameEngine implements KeyListener {
             addPlayerFriction();
             renderer.setCameraPosition(0, (int) Utils.lerp(renderer.getCameraPosition().y, player.getY() - 500, .05));
         }
+/*
+        if(player.vel.y > 0){
+            renderer.setCameraPosition(0, (int) Utils.lerp(renderer.getCameraPosition().y, player.getY() - 500, .05));
+        }*/
 
 
         //========================================================
@@ -129,7 +130,8 @@ public class GameEngine implements KeyListener {
         //========================================================
 
         renderer.setScoreMulti(scoreMultiplier);
-        renderer.setTimer((float) ((System.currentTimeMillis() - startTime) / 1000));
+        renderer.setTimer(startTime);
+
     }
 
     public void render(Graphics graphics){
@@ -137,22 +139,31 @@ public class GameEngine implements KeyListener {
         renderer.clearGameObjects();
 
         //Rendering the gameObjects
-        for(int i = 0; i < gameObjects.size; i++){
-            renderer.addGameObject(gameObjects.get(i));
+        for (int i = 0; i < temporalRenderedObjects.size; i++) {
+            renderer.add(temporalRenderedObjects.get(i));
         }
-        renderer.addGameObject(player);
+
+        for(int i = 0; i < gameObjects.size; i++){
+            renderer.add(gameObjects.get(i));
+        }
+        renderer.add(player);
 
         renderer.render(graphics);
     }
 
 
-
     public void checkPlayerOutOfScreen(){
+
         if(player.getX() <  -player.getShape().getWidth()/2){
             player.setPos(480 - player.getShape().getWidth()/2, player.getY());
         }
         else if(player.getX() > 480 - player.getShape().getWidth()/2){
             player.setPos(-player.getShape().getWidth()/2, player.getY());
+        }
+
+        if(player.getX() < 0){
+            System.out.println(new Rectangle2D.Double(480 + player.getX(), player.getY(), player.getShape().getWidth(),player.getShape().getHeight()));
+            temporalRenderedObjects.add(new GameObject(new Rectangle2D.Double(480 + player.getX(), player.getY(), player.getShape().getWidth(),player.getShape().getHeight()), player.getSprite()));
         }
     }
 
@@ -160,15 +171,22 @@ public class GameEngine implements KeyListener {
         List<GameObject> possibleColliders = new List<>();
 
         for(int i = 0; i < gameObjects.size; i++){
-            if(gameObjects.get(i).getCollisionType() == CollisionType.COLLIDE){
-                possibleColliders.add(gameObjects.get(i));
+            GameObject gameObject = gameObjects.get(i);
+            if(gameObject.getCollisionType() == CollisionType.COLLIDE){
+                possibleColliders.add(gameObject);
 
-                if(gameObjects.get(i).getX() + gameObjects.get(i).getBounds().getWidth() >= 480){
-                    possibleColliders.add(new Solid(-1, gameObjects.get(i).getY(), 1, gameObjects.get(i).getBounds().getHeight(), ""));
+                if(gameObject.getX() + gameObject.getBounds().getWidth() >= 480){
+                    possibleColliders.add(new Solid(-gameObject.getBounds().getWidth(), gameObject.getY(), gameObject.getBounds().getWidth(), gameObject.getBounds().getHeight(), ""));
+                    if(renderer instanceof GameRenderer.DebugRenderer r){
+                        r.addDebugObject(new Solid(-gameObject.getBounds().getWidth(), gameObject.getY(), gameObject.getBounds().getWidth(), gameObject.getBounds().getHeight(), ""));
+                    }
                 }
 
-                if(gameObjects.get(i).getX()+ gameObjects.get(i).getBounds().getWidth() <= 0){
-                    possibleColliders.add(new Solid(481, gameObjects.get(i).getY(), 1, gameObjects.get(i).getBounds().getHeight(), ""));
+                if(gameObject.getX() <= 0){
+                    possibleColliders.add(new Solid(481, gameObject.getY(), gameObject.getBounds().getWidth(), gameObject.getBounds().getHeight(), ""));
+                    if(renderer instanceof GameRenderer.DebugRenderer r){
+                        r.addDebugObject(new Solid(481, gameObject.getY(), gameObject.getBounds().getWidth(), gameObject.getBounds().getHeight(), ""));
+                    }
                 }
             }
         }
@@ -255,6 +273,8 @@ public class GameEngine implements KeyListener {
 
     public void checkPlayerCollision(){
 
+        interactiveObject = null;
+
         List<GameObject> possibleCollisions = new List<>();
         for(int i = 0; i < gameObjects.size; i++){
             possibleCollisions.add(gameObjects.get(i));
@@ -262,8 +282,8 @@ public class GameEngine implements KeyListener {
 
         for(int i = 0; i < possibleCollisions.size; i++){
             if(player.getShape().intersects(possibleCollisions.get(i).getShape().getBounds2D())){
-                if(possibleCollisions.get(i).getCollisionType() == CollisionType.INTERACTION){
-
+                if(possibleCollisions.get(i) instanceof Interactible interactible){
+                    interactiveObject = interactible;
                 }
 
                 if(possibleCollisions.get(i) instanceof Collectible collectible) {
@@ -308,6 +328,13 @@ public class GameEngine implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
+
+        if(e.getKeyCode() == KeyEvent.VK_Q){
+            if(interactiveObject != null){
+                interactiveObject.onInteraction(player);
+            }
+        }
+
         if(playerOnGround){
             if(e.getKeyCode() == KeyEvent.VK_W){
                 storedVel.y -= 10;
