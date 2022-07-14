@@ -1,19 +1,26 @@
 package net.zelythia.jump.Screens;
 
+import net.zelythia.jump.JumpKing;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class MainMenu extends JPanel {
+public class MainMenu extends JPanel implements ActionListener {
 
     //Image image;
 
     public MainMenu(){
-        // this.add():
-        //
-        // new Label()
-        // new Button()
-        // new Checkbox()
-        // new TextArea()
+        this.setFocusable(true);
+
+        JButton startGame = new JButton("Start");
+
+
+        startGame.addActionListener(this);
+
+        this.add(startGame);
+
 
         // try {
         //     image = ImageIO.read("scr/main/resources/image.png");
@@ -27,5 +34,13 @@ public class MainMenu extends JPanel {
         super.paintComponent(g);
 
         //g.drawImage(image, x, y, width, height);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+       if(e.getActionCommand() == "Start"){
+            JumpKing.initializeGameScene();
+       }
+
     }
 }

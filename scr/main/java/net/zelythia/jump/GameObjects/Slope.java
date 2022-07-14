@@ -42,7 +42,6 @@ public class Slope extends GameObject{
 
 
 
-
     private void setSlopeCollisionInteraction(double x){
         slopeTranslateX = x;
     }
@@ -55,5 +54,6 @@ public class Slope extends GameObject{
     public void setPos(double x, double y) {
         Polygon shape = (Polygon) getShape();
         shape.translate((int) x, (int) y);
+        shape.invalidate();
     }
 }

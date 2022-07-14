@@ -1,6 +1,7 @@
 package net.zelythia.jump;
 
 import net.zelythia.jump.GameObjects.GameObject;
+import net.zelythia.jump.GameObjects.Player;
 import net.zelythia.jump.Utils.List.List;
 import net.zelythia.jump.Utils.Vector2D;
 
@@ -12,16 +13,18 @@ import java.awt.geom.RectangularShape;
 //Panel = Screen = View
 public class GameRenderer extends JPanel implements Renderer {
 
-    private int camX;
-    private int camY;
-    private int camWidth;
-    private int camHeight;
+    protected int camX;
+    protected int camY;
+    protected int camWidth;
+    protected int camHeight;
 
     public List<GameObject> gameObjects;
 
     public GameRenderer(){
         this.setFocusable(true);
+
         this.setCameraBounds(0,0,480,800);
+
 
         gameObjects = new List<GameObject>();
 
@@ -59,14 +62,24 @@ public class GameRenderer extends JPanel implements Renderer {
         scoreMultiLabel.setText(Float.toString(m));
     }
 
-    public void setTimer(Float t){
-        timerLabel.setText(Float.toString(t));
+    public void setTimer(Long t){
+        if(t==0){
+            timerLabel.setText("0.00");
+        }
+        else{
+            String time =Float.toString((System.currentTimeMillis() - t) / 1000f);
+            if(time.substring(time.indexOf(".")+1, time.length()).length() > 2){
+                time = time.substring(0, time.length()-1);
+            }
+
+            timerLabel.setText(time);
+        }
     }
 
     /**
      * Newly added gameObjects will be rendered in front of the others
      */
-    public void addGameObject(GameObject gameObject){
+    public void add(GameObject gameObject){
         gameObjects.add(gameObject);
     }
 
@@ -126,27 +139,71 @@ public class GameRenderer extends JPanel implements Renderer {
 
 
     public static class DebugRenderer extends GameRenderer{
+
+        private List<GameObject> debugObjects = new List<>();
+
+        public DebugRenderer(){
+            camWidth = 580;
+            camHeight = 900;
+        }
+
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
 
             //Drawing the background
             g.setColor(Color.DARK_GRAY);
-            g.fillRect(0, 0, 480, 800);
+            g.fillRect(0, 0, 580, 900);
 
+            RectangularShape camera = new Rectangle2D.Double(camX, camY, camWidth, camHeight);
 
             for(int i = 0; i < gameObjects.size; i++){
                 g.setColor(Color.CYAN);
 
-                GameObject gameObject = gameObjects.get(i);
-                if(gameObject.getShape() instanceof Polygon polygon){
-                    g.drawPolygon(polygon);
-                }
-                else if(gameObject.getShape() instanceof RectangularShape shape){
-                    g.drawRect((int) shape.getBounds2D().getX(), (int) shape.getBounds2D().getY(), (int) shape.getBounds2D().getWidth(), (int) shape.getBounds2D().getHeight());
+                if(camera.intersects(gameObjects.get(i).getShape().getBounds2D())){
+                    GameObject gameObject = gameObjects.get(i);
+                    if(gameObject instanceof Player){
+                        g.setColor(Color.GREEN);
+                    }
+                    if(gameObject.getShape() instanceof Polygon p){
+                        Polygon polygon = new Polygon(p.xpoints, p.ypoints, p.npoints);
+
+                        polygon.translate(-camX, -camY);
+                        g.drawPolygon(polygon);
+                    }
+                    else if(gameObject.getShape() instanceof RectangularShape shape){
+                        g.drawRect(Math.round((float) shape.getBounds2D().getX()) - camX, Math.round((float) shape.getBounds2D().getY()) - camY, Math.round((float) shape.getBounds2D().getWidth()), Math.round((float) shape.getBounds2D().getHeight()));
+                    }
                 }
             }
 
+            for(int i = 0; i < debugObjects.size; i++) {
+                g.setColor(Color.MAGENTA);
+
+                if (camera.intersects(debugObjects.get(i).getShape().getBounds2D())) {
+                    GameObject gameObject = debugObjects.get(i);
+                    if(gameObject.getShape() instanceof Polygon p){
+                        Polygon polygon = new Polygon(p.xpoints, p.ypoints, p.npoints);
+
+                        polygon.translate(-camX, -camY);
+                        g.drawPolygon(polygon);
+                    }
+                    else if(gameObject.getShape() instanceof RectangularShape shape){
+                        g.drawRect((int) shape.getBounds2D().getX() - camX, (int) shape.getBounds2D().getY() - camY, (int) shape.getBounds2D().getWidth(), (int) shape.getBounds2D().getHeight());
+                    }
+                }
+            }
+
+            clearDebugObjects();
+            clearGameObjects();
+        }
+
+        public void addDebugObject(GameObject shape){
+            debugObjects.add(shape);
+        }
+
+        public void clearDebugObjects(){
+            debugObjects.clear();
         }
     }
 }

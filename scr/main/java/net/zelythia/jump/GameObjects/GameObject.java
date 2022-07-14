@@ -13,11 +13,17 @@ import java.util.Objects;
 
 
 //Model
-public abstract class GameObject{
+public class GameObject{
 
     protected Shape shape;
     private Image sprite;
     private CollisionType collisionType;
+
+    public GameObject(Shape shape, Image sprite){
+        this.shape = shape;
+        this.sprite = sprite;
+        collisionType = CollisionType.NONE;
+    }
 
     public GameObject(Shape shape, String sprite){
         this.shape = shape;
