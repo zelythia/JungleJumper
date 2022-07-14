@@ -77,7 +77,7 @@ public class GameEngine implements KeyListener {
         gameObjects.add(new Solid(220, -250, 100, 75, "scr/main/resources/wall.png"));
         gameObjects.add(new Solid(320, -295, 100, 120, "scr/main/resources/wall.png"));
         //Block 6
-
+        //lukas is swag
 
         //Collectibles
         gameObjects.add(new Coin(30, 70));
