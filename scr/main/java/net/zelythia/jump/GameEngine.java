@@ -77,13 +77,61 @@ public class GameEngine implements KeyListener {
         gameObjects.add(new Solid(220, -250, 100, 75, "scr/main/resources/wall.png"));
         gameObjects.add(new Solid(320, -295, 100, 120, "scr/main/resources/wall.png"));
         //Block 6
-        //deinemutteristdick
+        gameObjects.add(new Solid(60, -350, 120, 50, "scr/main/resources/wall.png"));
+        //Block 7
+        gameObjects.add(new Solid(320, -425, 120, 40, "scr/main/resources/wall.png"));
+        //Block 8
+        gameObjects.add(new Solid(0, -475, 100, 50, "scr/main/resources/wall.png"));
+        //Block 9
+        gameObjects.add(new Solid(200, -525, 75, 50, "scr/main/resources/wall.png"));
+        //Block 10
+        gameObjects.add(new Solid(75, -650, 75, 50, "scr/main/resources/wall.png"));
+        //Block 11
+        gameObjects.add(new Solid(375, -650, 75, 50, "scr/main/resources/wall.png"));
+        //Block 12
+        gameObjects.add(new Solid(220, -825, 150, 75, "scr/main/resources/wall.png"));
+        //Block 13
+        gameObjects.add(new Solid(60, -900, 100, 75, "scr/main/resources/wall.png"));
+        //Block 14
+        gameObjects.add(new Solid(0, -1025, 60, 75, "scr/main/resources/wall.png"));
+        gameObjects.add(Slope.Down(60, -1025, 50, 75));
+        //Block 15
+        gameObjects.add(new Solid(400, -1025, 80, 75, "scr/main/resources/wall.png"));
+        //Block 16
+        gameObjects.add(new Solid(190, -1100, 120, 75, "scr/main/resources/wall.png"));
+        gameObjects.add(Slope.DownInv(160, -1100, 30, 75));
+        gameObjects.add(Slope.Down(310, -1100, 30, 75));
+        //Block 17
+        gameObjects.add(new Solid(0, -1225, 50, 75, "scr/main/resources/wall.png"));
+        gameObjects.add(Slope.UpInv(50, -1225, 75, 75));
+        //Block 18
+        gameObjects.add(new Solid(200, -1250, 100, 50, "scr/main/resources/wall.png"));
+        //Block 19
+        gameObjects.add(new Solid(400, -1300, 80, 50, "scr/main/resources/wall.png"));
+        //Block 20
+        gameObjects.add(new Solid(75, -1375, 100, 50, "scr/main/resources/wall.png"));;
+        //Block 21
+        gameObjects.add(new Solid(275, -1450, 100, 75, "scr/main/resources/wall.png"));
+        gameObjects.add(Slope.DownInv(200, -1450, 75, 75));
+        //Block 22
+        gameObjects.add(Slope.Up(75, -1550, 50, 100));
+        gameObjects.add(Slope.UpInv(125, -1550, 50, 100));
+        //Block 23
+        gameObjects.add(new Solid(400, -1600, 80, 75, "scr/main/resources/wall.png"));
+        gameObjects.add(Slope.DownInv(350, -1600, 50, 75));
+        //Block 24
+        gameObjects.add(new Solid(0, -1700, 75, 75, "scr/main/resources/wall.png"));
+        gameObjects.add(Slope.Down(75, -1700, 50, 75));
+        //Block 25
+        gameObjects.add(new Solid(160, -1800, 160, 50, "scr/main/resources/wall.png"));
+
 
         //Collectibles
         gameObjects.add(new Coin(30, 70));
 
         //Interactible
         gameObjects.add(new Vine(new Rectangle2D.Double(220,370,10,150), "scr/main/resources/vine.png"));
+        gameObjects.add(new Vine(new Rectangle2D.Double(295, -750, 10, 150), "scr/main/resources/vine.png"));
 
     }
 
