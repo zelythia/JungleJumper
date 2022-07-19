@@ -1,14 +1,8 @@
 package net.zelythia.jump.GameObjects;
 
 
-import net.zelythia.jump.Collision.CollisionData;
-import net.zelythia.jump.Collision.CollisionType;
-import net.zelythia.jump.Events.CollisionListener;
-import net.zelythia.jump.Events.UpdateListener;
-import net.zelythia.jump.GameEngine;
 import net.zelythia.jump.Utils.Vector2D;
 
-import java.awt.*;
 import java.awt.geom.RectangularShape;
 
 public class Player extends GameObject {

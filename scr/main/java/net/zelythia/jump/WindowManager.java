@@ -11,7 +11,7 @@ public class WindowManager extends JFrame {
         this.setVisible(true);
         this.setFocusable(true);
 
-        this.setSize(496, 800);
+        this.setSize(496, 839);
 //        this.setSize(580, 900);
         this.setResizable(false);
     }
@@ -20,5 +20,7 @@ public class WindowManager extends JFrame {
     public void setPanel(JPanel panel){
         this.getContentPane().removeAll();
         this.getContentPane().add(panel);
+        this.getContentPane().revalidate(); //IMPORTANT
+        this.getContentPane().repaint();    //IMPORTANT
     }
 }

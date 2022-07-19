@@ -1,9 +1,7 @@
 package net.zelythia.jump;
 
 
-
 import net.zelythia.jump.Collision.CollisionType;
-import net.zelythia.jump.Events.CollisionListener;
 import net.zelythia.jump.Events.UpdateListener;
 import net.zelythia.jump.GameObjects.*;
 import net.zelythia.jump.Utils.List.List;
@@ -13,7 +11,7 @@ import net.zelythia.jump.Utils.Vector2D;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.geom.*;
+import java.awt.geom.Rectangle2D;
 
 
 //Game controller = Game engine = Control
@@ -33,12 +31,10 @@ public class GameEngine implements KeyListener {
 
 
     //Listeners
-    public static List<CollisionListener> collisionListeners;
     public static List<UpdateListener> updateListeners;
 
 
     static {
-        collisionListeners = new List<>();
         updateListeners = new List<>();
     }
 
@@ -52,12 +48,12 @@ public class GameEngine implements KeyListener {
 
     public void initializeGameObjects()
     {
-        player = new Player(new Rectangle2D.Double(220, 645, 50, 50), "scr/main/resources/player.png", 20);
+        player = new Player(new Rectangle2D.Double(220, 645, 50, 50), "scr/main/resources/monkey.png", 20);
 
         //y geht nach unten; 0,0 linke obere ecke
         //480x800
         //Solids
-        gameObjects.add(new Solid(0, 700,480, 20, "scr/main/resources/wall.png"));      //Boden
+        gameObjects.add(new Solid(0, 700,480, 259, "scr/main/resources/grass_floor.png"));      //Boden
 
         gameObjects.add(new Solid(320, 500, 160,200, "scr/main/resources/wall.png"));   //Startblock rechts
         gameObjects.add(new Solid(0, 500, 160, 200, "scr/main/resources/wall.png"));    //Startblock links
@@ -127,7 +123,10 @@ public class GameEngine implements KeyListener {
 
 
         //Collectibles
-        gameObjects.add(new Coin(30, 70));
+        gameObjects.add(new Coin(30, 60));
+
+        //BANANA
+        gameObjects.add(new Banana(200, -1900));
 
         //Interactible
         gameObjects.add(new Vine(new Rectangle2D.Double(220,370,10,150), "scr/main/resources/vine.png"));
@@ -139,10 +138,6 @@ public class GameEngine implements KeyListener {
     public void update(float deltaTime){
         temporalRenderedObjects.clear();
 
-        /*
-        for(int i = 0; i < collisionListeners.size; i++){
-            updateCollisionListeners(collisionListeners.get(i));
-        }*/
 
         for(int i = 0; i < updateListeners.size; i++){
             updateListeners.get(i).update(deltaTime);
@@ -165,11 +160,6 @@ public class GameEngine implements KeyListener {
             addPlayerFriction();
             renderer.setCameraPosition(0, (int) Utils.lerp(renderer.getCameraPosition().y, player.getY() - 500, .05));
         }
-/*
-        if(player.vel.y > 0){
-            renderer.setCameraPosition(0, (int) Utils.lerp(renderer.getCameraPosition().y, player.getY() - 500, .05));
-        }*/
-
 
         //========================================================
 
@@ -210,7 +200,6 @@ public class GameEngine implements KeyListener {
         }
 
         if(player.getX() < 0){
-            System.out.println(new Rectangle2D.Double(480 + player.getX(), player.getY(), player.getShape().getWidth(),player.getShape().getHeight()));
             temporalRenderedObjects.add(new GameObject(new Rectangle2D.Double(480 + player.getX(), player.getY(), player.getShape().getWidth(),player.getShape().getHeight()), player.getSprite()));
         }
     }
@@ -362,7 +351,14 @@ public class GameEngine implements KeyListener {
         long endTime = System.currentTimeMillis();
 
         System.out.println("Time: " + (endTime - startTime) / 1000 + " seconds");
-        System.out.println("Score: " + (100000*scoreMultiplier)/(endTime - startTime));
+        System.out.println("Score: " + (100000*scoreMultiplier)/(endTime - startTime) + "s");
+
+        if(!JumpKing.username.equals("")){
+            DB.addPlayerScore(JumpKing.username, scoreMultiplier, (100000*scoreMultiplier)/(endTime - startTime));
+        }
+
+        renderer.displayFinishScreen(scoreMultiplier, (100000*scoreMultiplier)/(endTime - startTime));
+
     }
 
 //=======EVENTS=========================================================================================================
@@ -373,6 +369,8 @@ public class GameEngine implements KeyListener {
     public void keyTyped(KeyEvent e) {
         if(startTime==0) startTime = System.currentTimeMillis();
     }
+
+    boolean playerFlipped = false;
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -386,6 +384,10 @@ public class GameEngine implements KeyListener {
         if(playerOnGround){
             if(e.getKeyCode() == KeyEvent.VK_W){
                 storedVel.y -= 10;
+
+                if(playerFlipped) player.setSprite("scr/main/resources/monkey_crouching_flipped.png");
+                else player.setSprite("scr/main/resources/monkey_crouching.png");
+
             }
 
             if(e.getKeyCode() == KeyEvent.VK_A){
@@ -396,7 +398,6 @@ public class GameEngine implements KeyListener {
                 storedVel.x += 5;
             }
 
-            player.setSprite("scr/main/resources/player_charging.png");
         }
     }
 
@@ -407,6 +408,14 @@ public class GameEngine implements KeyListener {
             player.vel.add(storedVel);
             storedVel = new Vector2D(0,0);
         }
-        player.setSprite("scr/main/resources/player.png");
+
+        playerFlipped = player.vel.x > 0;
+        if(player.vel.x > 0){
+            player.setSprite("scr/main/resources/monkey_flipped.png");
+        }
+        else{
+            player.setSprite("scr/main/resources/monkey.png");
+        }
+
     }
 }

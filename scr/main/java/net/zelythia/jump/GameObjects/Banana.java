@@ -7,29 +7,30 @@ import net.zelythia.jump.GameEngine;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 
-public class Coin extends GameObject implements Collectible, UpdateListener {
+public class Banana extends GameObject implements Collectible, UpdateListener {
 
-    public Coin(double x, double y) {
-        super(new Rectangle2D.Double(x, y, 30, 30), "scr/main/resources/coin.png");
+    public Banana(double x, double y) {
+        super(new Rectangle2D.Double(x, y, 80, 80), "scr/main/resources/banana.png");
         super.setCollisionType(CollisionType.INTERACTION);
         GameEngine.updateListeners.add(this);
     }
 
     @Override
     public void onCollect(GameEngine engine) {
-        System.out.println("Collected a coin!");
+        System.out.println("Collected hte banana!");
         engine.removeGameObject(this);
-        engine.addScoreMultiplier(10);
+        engine.addScoreMultiplier(100);
+        engine.levelFinished();
     }
 
 
     double initialPosY = this.getY();
-    double goalPos = initialPosY - 5;
+    double goalPos = initialPosY - 15;
     int updateCounter = 0;
 
     @Override
     public void update(float deltaTime) {
-        if(updateCounter == 7){
+        if(updateCounter == 5){
             if(this.getY() > goalPos){
                 setPos(this.getX(), this.getY()-1);
             }
@@ -38,7 +39,7 @@ public class Coin extends GameObject implements Collectible, UpdateListener {
             }
 
             if(this.getY() == goalPos){
-                goalPos = (goalPos == initialPosY - 5)? initialPosY + 5: initialPosY - 5;
+                goalPos = (goalPos == initialPosY - 15)? initialPosY + 15: initialPosY - 15;
             }
             updateCounter = 0;
         }

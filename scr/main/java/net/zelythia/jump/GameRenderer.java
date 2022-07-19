@@ -3,30 +3,45 @@ package net.zelythia.jump;
 import net.zelythia.jump.GameObjects.GameObject;
 import net.zelythia.jump.GameObjects.Player;
 import net.zelythia.jump.Utils.List.List;
+import net.zelythia.jump.Utils.Utils;
 import net.zelythia.jump.Utils.Vector2D;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
+import java.io.File;
+import java.io.IOException;
 
 //Panel = Screen = View
-public class GameRenderer extends JPanel implements Renderer {
+public class GameRenderer extends JPanel implements Renderer, ActionListener {
 
     protected int camX;
     protected int camY;
     protected int camWidth;
     protected int camHeight;
 
+    private final SpringLayout layout = new SpringLayout();
+    private Image backgroundImage;
+
     public List<GameObject> gameObjects;
 
-    public GameRenderer(){
+    public GameRenderer() {
         this.setFocusable(true);
-
         this.setCameraBounds(0,0,480,800);
 
+        try {
+            backgroundImage = ImageIO.read(new File("scr/main/resources/levleBg.png"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         gameObjects = new List<GameObject>();
+
 
         createUI();
     }
@@ -35,7 +50,6 @@ public class GameRenderer extends JPanel implements Renderer {
     JLabel timerLabel;
 
     public void createUI(){
-        SpringLayout layout = new SpringLayout();
         this.setLayout(layout);
 
         scoreMultiLabel = new JLabel();
@@ -94,9 +108,10 @@ public class GameRenderer extends JPanel implements Renderer {
         super.paintComponent(g);
 
         //Drawing the background
-        g.setColor(new Color(51, 102, 0));
-        g.fillRect(0, 0, 480, 800);
+//        g.setColor(new Color(51, 102, 0));
+//        g.fillRect(0, 0, 480, 800);
 
+        g.drawImage(backgroundImage, 0, 0, 480, 900, this);
 
         RectangularShape camera = new Rectangle2D.Double(camX, camY, camWidth, camHeight);
 
@@ -135,6 +150,63 @@ public class GameRenderer extends JPanel implements Renderer {
     @Override
     public void render(Graphics graphics) {
         super.repaint();
+    }
+
+
+    public void displayFinishScreen(float score, float time){
+        JPanel bg = new JPanel();
+        bg.setBackground(new Color(0,0,0,150));
+        bg.setOpaque(true);
+        bg.setLayout(null);
+
+        layout.putConstraint(SpringLayout.WEST, bg, 0, SpringLayout.WEST, this);
+        layout.putConstraint(SpringLayout.EAST, bg, 0, SpringLayout.EAST, this);
+        layout.putConstraint(SpringLayout.NORTH, bg, 150, SpringLayout.NORTH, this);
+        layout.putConstraint(SpringLayout.SOUTH, bg, -150, SpringLayout.SOUTH, this);
+
+        JLabel finishedText = new JLabel("<HTML><U>FINISHED!</U></HTML>");
+        finishedText.setFont(Utils.font.deriveFont(50f).deriveFont(Font.BOLD));
+        finishedText.setForeground(Utils.WHITE);
+        finishedText.setBounds(20,20,440,50);
+        finishedText.setHorizontalAlignment(JLabel.CENTER);
+        bg.add(finishedText);
+
+        JLabel nameLabel = new JLabel("Name: " + JumpKing.username);
+        nameLabel.setFont(Utils.font.deriveFont(40f).deriveFont(Font.BOLD));
+        nameLabel.setForeground(Utils.WHITE);
+        nameLabel.setBounds(20,100,440,50);
+        nameLabel.setHorizontalAlignment(JLabel.CENTER);
+        bg.add(nameLabel);
+
+        JLabel scoreLAbel = new JLabel("Score: " + score);
+        scoreLAbel.setFont(Utils.font.deriveFont(40f).deriveFont(Font.BOLD));
+        scoreLAbel.setForeground(Utils.WHITE);
+        scoreLAbel.setBounds(20,180,440,50);
+        scoreLAbel.setHorizontalAlignment(JLabel.CENTER);
+        bg.add(scoreLAbel);
+
+        JLabel timeLabel = new JLabel("Time: " + time + "s");
+        timeLabel.setFont(Utils.font.deriveFont(40f).deriveFont(Font.BOLD));
+        timeLabel.setForeground(Utils.WHITE);
+        timeLabel.setBounds(20,260,440,50);
+        timeLabel.setHorizontalAlignment(JLabel.CENTER);
+        bg.add(timeLabel);
+
+        JButton mainMenu = new JButton("Main Menu");
+        mainMenu.setBounds(80, 380, 320, 70);
+        mainMenu.setFont(Utils.font.deriveFont(50f));
+        mainMenu.setForeground(new Color(203, 203, 203));
+        mainMenu.setBackground(new Color(64, 106, 71));
+        mainMenu.setBorder(new LineBorder(Color.darkGray, 5));
+        mainMenu.addActionListener(this);
+        bg.add(mainMenu);
+
+        this.add(bg);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JumpKing.initializeMainMenu();
     }
 
 
