@@ -17,11 +17,13 @@ public class JumpKing {
     public JumpKing(){
         windowManager = new WindowManager();
 
-        initializeGameScene();
+        DB.getSessionID();
+        loadMainMenu();
     }
 
+    //TODO Time not correctly in DB
 
-    public static void initializeMainMenu(){
+    public static void loadMainMenu(){
         windowManager.setPanel(new MainMenu());
     }
 

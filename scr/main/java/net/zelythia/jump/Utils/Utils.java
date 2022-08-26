@@ -30,5 +30,14 @@ public class Utils {
         return a + f * (b - a);
     }
 
+    public static String time2String(int t){
+        System.out.println(t);
+        String time = Float.toString(t / 1000f);
+        if(time.substring(time.indexOf(".")+1).length() > 2){
+            time = time.substring(0, time.length()-1);
+        }
+
+        return time;
+    }
 
 }

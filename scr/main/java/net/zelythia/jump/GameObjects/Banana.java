@@ -17,7 +17,6 @@ public class Banana extends GameObject implements Collectible, UpdateListener {
 
     @Override
     public void onCollect(GameEngine engine) {
-        System.out.println("Collected hte banana!");
         engine.removeGameObject(this);
         engine.addScoreMultiplier(100);
         engine.levelFinished();

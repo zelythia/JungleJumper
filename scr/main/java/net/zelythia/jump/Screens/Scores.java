@@ -42,11 +42,10 @@ public class Scores extends JPanel implements ActionListener {
         List<String> displayList = new ArrayList<String>();
 
         JSONArray topPlayers = DB.getTopPlayers();
-        System.out.println(topPlayers);
 
         for(int i = 0; i < topPlayers.length(); i++){
             if(topPlayers.get(i) instanceof JSONObject player){
-                displayList.add("   " + Math.addExact(i, 1) + ".   " + player.get("name").toString() + " - Score: " + player.get("score").toString() + " - " + player.get("time").toString() + "s");
+                displayList.add("   " + Math.addExact(i, 1) + ".   " + player.get("name").toString() + " - Score: " + player.get("score").toString() + " - " + Utils.time2String((Integer)player.get("time")) + "s");
             }
         }
 
@@ -59,6 +58,7 @@ public class Scores extends JPanel implements ActionListener {
 
         for(String s: displayList){
             JLabel label = new JLabel(s);
+            label.setToolTipText(s);
             label.setPreferredSize(new Dimension(400, 50));
             label.setMinimumSize(new Dimension(400, 50));
             label.setMaximumSize(new Dimension(400, 50));
@@ -106,6 +106,6 @@ public class Scores extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        JumpKing.initializeMainMenu();
+        JumpKing.loadMainMenu();
     }
 }

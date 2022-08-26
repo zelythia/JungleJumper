@@ -9,7 +9,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
 
 
 //Model
@@ -36,7 +35,6 @@ public class GameObject{
         }
         collisionType = CollisionType.NONE;
     }
-    
 
     public void setShape(RectangularShape shape)
     {

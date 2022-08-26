@@ -1,6 +1,7 @@
 package net.zelythia.jump;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -11,17 +12,36 @@ import java.net.URL;
 
 public class DB {
 
-    public DB(){
+    private static String sessionID;
 
-    }
-
-    public static JSONArray getTopPlayers(){
+    public static void getSessionID(){
         try {
-            URL url = new URL("http://79.250.24.53/jkapi/top");
+            URL url = new URL("https://zelythia.net/jkapi/createsession");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
 
-            int status = con.getResponseCode();
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuilder content = new StringBuilder();
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+            con.disconnect();
+
+            sessionID = (String) new JSONObject(content.toString()).get("sessionID");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public static JSONArray getTopPlayers(){
+        try {
+            URL url = new URL("https://zelythia.net/jkapi/top");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
 
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(con.getInputStream()));
@@ -42,13 +62,14 @@ public class DB {
 
     public static void addPlayerScore(String name, float score, float time){
         try {
-            URL url = new URL("http://79.250.24.53/jkapi/add/" + name);
+            URL url = new URL("https://zelythia.net/jkapi/add/" + name);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type","application/json");
             con.setDoOutput(true);
 
-            String postJsonData = "{\"score\":" + score + ",\"time\":" + time + "}";
+            String postJsonData = "{\"score\":" + score + ",\"time\":" + time + ",\"sessionID\":\"" + sessionID + "\"}";
+            System.out.println(postJsonData);
 
             // Send post request
             con.setDoOutput(true);
@@ -56,6 +77,8 @@ public class DB {
             wr.writeBytes(postJsonData);
             wr.flush();
             wr.close();
+
+            System.out.println(con.getResponseCode());
 
             con.disconnect();
         } catch (IOException e) {

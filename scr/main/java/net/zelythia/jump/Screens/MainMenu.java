@@ -40,7 +40,7 @@ public class MainMenu extends JPanel implements ActionListener, KeyListener, Foc
     public void addComponents(){
         this.setLayout(null);
 
-        nameField = new JTextField("Name");
+        nameField = new JTextField(JumpKing.username.equals("")? "Name": JumpKing.username);
         nameField.addActionListener(this);
         nameField.setHorizontalAlignment(JTextField.CENTER);
         nameField.setBounds(100, 50, 280, 50);
@@ -107,9 +107,11 @@ public class MainMenu extends JPanel implements ActionListener, KeyListener, Foc
 
         }
         else if(e.getSource().equals(startGame)) {
+            updateUserNameEvent();
             JumpKing.initializeGameScene();
         }
         else if(e.getSource().equals(scores)) {
+            updateUserNameEvent();
             JumpKing.loadScoreMenu();
         }
         else if(e.getSource().equals(exit)) {
@@ -120,14 +122,18 @@ public class MainMenu extends JPanel implements ActionListener, KeyListener, Foc
 
     boolean namePlaceholderChange = false;
 
-    @Override
-    public void keyTyped(KeyEvent e) {
+    public void updateUserNameEvent(){
         if(!namePlaceholderChange){
             namePlaceholderChange = true;
             nameField.setText("");
         }
 
         JumpKing.username = nameField.getText();
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+       updateUserNameEvent();
     }
 
     @Override

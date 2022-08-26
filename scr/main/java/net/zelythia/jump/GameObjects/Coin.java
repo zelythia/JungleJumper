@@ -17,7 +17,6 @@ public class Coin extends GameObject implements Collectible, UpdateListener {
 
     @Override
     public void onCollect(GameEngine engine) {
-        System.out.println("Collected a coin!");
         engine.removeGameObject(this);
         engine.addScoreMultiplier(10);
     }

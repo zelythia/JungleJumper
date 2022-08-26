@@ -18,7 +18,7 @@ import java.io.File;
 import java.io.IOException;
 
 //Panel = Screen = View
-public class GameRenderer extends JPanel implements Renderer, ActionListener {
+public class GameRenderer extends JPanel implements ActionListener {
 
     protected int camX;
     protected int camY;
@@ -76,17 +76,12 @@ public class GameRenderer extends JPanel implements Renderer, ActionListener {
         scoreMultiLabel.setText(Float.toString(m));
     }
 
-    public void setTimer(Long t){
+    public void setTimer(int t){
         if(t==0){
             timerLabel.setText("0.00");
         }
         else{
-            String time =Float.toString((System.currentTimeMillis() - t) / 1000f);
-            if(time.substring(time.indexOf(".")+1, time.length()).length() > 2){
-                time = time.substring(0, time.length()-1);
-            }
-
-            timerLabel.setText(time);
+            timerLabel.setText(Utils.time2String(t));
         }
     }
 
@@ -97,7 +92,6 @@ public class GameRenderer extends JPanel implements Renderer, ActionListener {
         gameObjects.add(gameObject);
     }
 
-    @Override
     public void clearGameObjects(){
         gameObjects.clear();
     }
@@ -142,12 +136,10 @@ public class GameRenderer extends JPanel implements Renderer, ActionListener {
         this.camY = y;
     }
 
-    @Override
     public Vector2D getCameraPosition() {
         return new Vector2D(camX,camY);
     }
 
-    @Override
     public void render(Graphics graphics) {
         super.repaint();
     }
@@ -185,6 +177,7 @@ public class GameRenderer extends JPanel implements Renderer, ActionListener {
         scoreLAbel.setHorizontalAlignment(JLabel.CENTER);
         bg.add(scoreLAbel);
 
+
         JLabel timeLabel = new JLabel("Time: " + time + "s");
         timeLabel.setFont(Utils.font.deriveFont(40f).deriveFont(Font.BOLD));
         timeLabel.setForeground(Utils.WHITE);
@@ -206,7 +199,7 @@ public class GameRenderer extends JPanel implements Renderer, ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        JumpKing.initializeMainMenu();
+        JumpKing.loadMainMenu();
     }
 
 

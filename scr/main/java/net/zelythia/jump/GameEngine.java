@@ -48,7 +48,7 @@ public class GameEngine implements KeyListener {
 
     public void initializeGameObjects()
     {
-        player = new Player(new Rectangle2D.Double(220, 645, 50, 50), "scr/main/resources/monkey.png", 20);
+        player = new Player(new Rectangle2D.Double(20, -1750, 50, 50), "scr/main/resources/monkey.png", 20);
 
         //y geht nach unten; 0,0 linke obere ecke
         //480x800
@@ -143,7 +143,6 @@ public class GameEngine implements KeyListener {
             updateListeners.get(i).update(deltaTime);
         }
 
-
         //=====Player movement======================================
 
         //Gravity
@@ -168,8 +167,8 @@ public class GameEngine implements KeyListener {
         //========================================================
 
         renderer.setScoreMulti(scoreMultiplier);
-        renderer.setTimer(startTime);
 
+        renderer.setTimer(startTime == 0? 0: (int) (System.currentTimeMillis() - startTime));
     }
 
     public void render(Graphics graphics){
@@ -350,14 +349,14 @@ public class GameEngine implements KeyListener {
     public void levelFinished(){
         long endTime = System.currentTimeMillis();
 
-        System.out.println("Time: " + (endTime - startTime) / 1000 + " seconds");
-        System.out.println("Score: " + (100000*scoreMultiplier)/(endTime - startTime) + "s");
+        System.out.println(endTime-startTime);
 
         if(!JumpKing.username.equals("")){
-            DB.addPlayerScore(JumpKing.username, scoreMultiplier, (100000*scoreMultiplier)/(endTime - startTime));
+
+            DB.addPlayerScore(JumpKing.username, scoreMultiplier, endTime - startTime);
         }
 
-        renderer.displayFinishScreen(scoreMultiplier, (100000*scoreMultiplier)/(endTime - startTime));
+        renderer.displayFinishScreen(scoreMultiplier, (endTime - startTime) / 1000f);
 
     }
 

@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/JK_jar</output-path>
     <root id="archive" name="JK.jar">
       <element id="module-output" name="JK" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/json-20220320.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
