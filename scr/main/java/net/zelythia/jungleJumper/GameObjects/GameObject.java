@@ -2,12 +2,12 @@ package net.zelythia.jungleJumper.GameObjects;
 
 
 import net.zelythia.jungleJumper.Collision.CollisionType;
+import net.zelythia.jungleJumper.JumpKing;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
-import java.io.File;
 import java.io.IOException;
 
 
@@ -28,7 +28,7 @@ public class GameObject{
         this.shape = shape;
         if(!sprite.equals("")){
             try {
-                this.sprite = ImageIO.read(new File(sprite));
+                this.sprite = ImageIO.read(JumpKing.class.getClassLoader().getResourceAsStream(sprite));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -50,7 +50,7 @@ public class GameObject{
 
     public void setSprite(String sprite){
         try {
-            this.sprite = ImageIO.read(new File(sprite));
+            this.sprite = ImageIO.read(JumpKing.class.getClassLoader().getResourceAsStream(sprite));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

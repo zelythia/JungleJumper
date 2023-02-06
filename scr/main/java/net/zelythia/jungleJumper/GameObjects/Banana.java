@@ -10,7 +10,7 @@ import java.awt.geom.RectangularShape;
 public class Banana extends GameObject implements Collectible, UpdateListener {
 
     public Banana(double x, double y) {
-        super(new Rectangle2D.Double(x, y, 80, 80), "scr/main/resources/banana.png");
+        super(new Rectangle2D.Double(x, y, 80, 80), "banana.png");
         super.setCollisionType(CollisionType.INTERACTION);
         GameEngine.updateListeners.add(this);
     }

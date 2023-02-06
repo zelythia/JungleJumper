@@ -7,7 +7,6 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import java.io.IOException;
 
 public class MainMenu extends JPanel implements ActionListener, KeyListener, FocusListener, MouseListener {
@@ -27,8 +26,8 @@ public class MainMenu extends JPanel implements ActionListener, KeyListener, Foc
         this.setOpaque(true);
 
         try {
-            backgroundImage = ImageIO.read(new File("scr/main/resources/background.png"));
-            font = Font.createFont(Font.TRUETYPE_FONT, new File("scr/main/resources/EduVICWANTBeginner-Bold.ttf"));
+            backgroundImage = ImageIO.read(JumpKing.class.getClassLoader().getResourceAsStream("background.png"));
+            font = Font.createFont(Font.TRUETYPE_FONT, JumpKing.class.getClassLoader().getResourceAsStream("EduVICWANTBeginner-Bold.ttf"));
         } catch (IOException | FontFormatException e) {
             throw new RuntimeException(e);
         }
@@ -49,7 +48,7 @@ public class MainMenu extends JPanel implements ActionListener, KeyListener, Foc
         nameField.addKeyListener(this);
         nameField.addFocusListener(this);
         nameField.setFont(font.deriveFont(40f).deriveFont(Font.BOLD));
-        nameField.setForeground(new Color(203, 203, 203));
+        nameField.setForeground(new Color(120, 120, 120));
         nameField.setBackground(new Color(64, 106, 71));
 
         title = new JTextField("Jungle Jumper");
@@ -160,6 +159,7 @@ public class MainMenu extends JPanel implements ActionListener, KeyListener, Foc
         if(!namePlaceholderChange){
             namePlaceholderChange = true;
             nameField.setText("");
+            nameField.setForeground(new Color(203, 203, 203));
         }
     }
 

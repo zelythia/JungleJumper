@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: net.zelythia.jungleJumper.JumpKing
+Class-Path: json-20220924.jar
+

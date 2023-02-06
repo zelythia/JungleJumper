@@ -1,7 +1,8 @@
 package net.zelythia.jungleJumper.Utils;
 
+import net.zelythia.jungleJumper.JumpKing;
+
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 
 public class Utils {
@@ -11,7 +12,7 @@ public class Utils {
 
     static{
         try {
-            font = Font.createFont(Font.TRUETYPE_FONT, new File("scr/main/resources/EduVICWANTBeginner-Bold.ttf"));
+            font = Font.createFont(Font.TRUETYPE_FONT, JumpKing.class.getClassLoader().getResourceAsStream("EduVICWANTBeginner-Bold.ttf"));
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }

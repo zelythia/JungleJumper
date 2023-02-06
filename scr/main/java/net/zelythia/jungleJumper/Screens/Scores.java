@@ -27,7 +27,7 @@ public class Scores extends JPanel implements ActionListener {
         this.setLayout(null);
 
         try {
-            backgroundImage = ImageIO.read(new File("scr/main/resources/background.png"));
+            backgroundImage = ImageIO.read(JumpKing.class.getClassLoader().getResourceAsStream("background.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

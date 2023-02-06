@@ -4,9 +4,11 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/scr/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/scr/main/resources" type="java-resource" />
+      <excludeFolder url="file://$MODULE_DIR$/.present" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="json-20220924" level="project" />
+    <orderEntry type="library" exported="" name="json-20220924" level="project" />
   </component>
 </module>

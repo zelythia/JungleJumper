@@ -14,7 +14,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
-import java.io.File;
 import java.io.IOException;
 
 //Panel = Screen = View
@@ -35,7 +34,7 @@ public class GameRenderer extends JPanel implements ActionListener {
         this.setCameraBounds(0,0,480,800);
 
         try {
-            backgroundImage = ImageIO.read(new File("scr/main/resources/levleBg.png"));
+            backgroundImage = ImageIO.read(JumpKing.class.getClassLoader().getResourceAsStream("levleBg.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

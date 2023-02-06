@@ -10,7 +10,7 @@ import java.awt.geom.RectangularShape;
 public class Coin extends GameObject implements Collectible, UpdateListener {
 
     public Coin(double x, double y) {
-        super(new Rectangle2D.Double(x, y, 30, 30), "scr/main/resources/coin.png");
+        super(new Rectangle2D.Double(x, y, 30, 30), "coin.png");
         super.setCollisionType(CollisionType.INTERACTION);
         GameEngine.updateListeners.add(this);
     }
